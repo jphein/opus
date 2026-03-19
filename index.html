@@ -326,7 +326,7 @@
       <span class="section-num">02</span>
       <h2>The Numbers</h2>
     </div>
-    <p class="section-note">Data from GitHub Search API (repos mentioning "opus 4.6" or "claude-opus-4-6"), GitHub Topics (claude-opus-4-6, opus-4-6, claude-opus), and user profile analysis of 83 unique developers.</p>
+    <p class="section-note">Data from GitHub Search API, commit signatures, code search, Topics (claude-opus-4-6, opus-4-6), and user profile analysis of 208 unique developers across 234 repos. All charts computed dynamically from the library.</p>
     <div class="chart-grid">
       <div class="chart-box cyan reveal">
         <div class="chart-title">Repos created per week (since release)</div>
@@ -425,7 +425,7 @@
       <span class="section-num">05</span>
       <h2>Top Repositories</h2>
     </div>
-    <p class="section-note">The 15 highest-starred public repos explicitly referencing Claude Opus 4.6 (excluding gpt4free which only mentions it as a supported model).</p>
+    <p class="section-note">The 15 highest-starred public repos referencing Claude Opus 4.6 &mdash; from massive platform integrations to dedicated projects.</p>
     <div class="chart-box cyan reveal" style="padding:0;" id="repo-section"></div>
   </section>
 
@@ -528,22 +528,23 @@
 <script>
 // ── ALL DATA ──
 
-var langData = [
-  { name: 'Python', count: 18, color: '#3572A5' },
-  { name: 'JavaScript', count: 16, color: '#f1e05a' },
-  { name: 'HTML', count: 12, color: '#e34c26' },
-  { name: 'TypeScript', count: 12, color: '#3178c6' },
-  { name: 'Rust', count: 5, color: '#dea584' },
-  { name: 'Shell', count: 4, color: '#89e051' },
-  { name: 'Go', count: 3, color: '#00ADD8' },
-  { name: 'Swift', count: 2, color: '#F05138' },
-  { name: 'Kotlin', count: 1, color: '#A97BFF' },
-  { name: 'C++', count: 1, color: '#f34b7d' },
-  { name: 'Zig', count: 1, color: '#ec915c' },
-  { name: 'CSS', count: 1, color: '#563d7c' },
-  { name: 'Dart', count: 1, color: '#00B4AB' },
-  { name: 'No language', count: 23, color: '#444' },
-];
+// Compute langData dynamically from libraryData
+var langData = (function() {
+  var langColors = { 'Python':'#3572A5','JavaScript':'#f1e05a','HTML':'#e34c26','TypeScript':'#3178c6',
+    'Rust':'#dea584','Shell':'#89e051','Go':'#00ADD8','Swift':'#F05138','Kotlin':'#A97BFF',
+    'C++':'#f34b7d','Zig':'#ec915c','CSS':'#563d7c','Dart':'#00B4AB','Java':'#b07219',
+    'Ruby':'#701516','Svelte':'#ff3e00','Solidity':'#AA6746','Elixir':'#6e4a7e','Crystal':'#000100',
+    'R':'#198CE7','C#':'#178600','PHP':'#4F5D95','Astro':'#ff5a03','Emacs Lisp':'#c065db',
+    'Jupyter Notebook':'#DA5B0B','Lua':'#000080','Nix':'#7e7eff','MDX':'#fcb32c' };
+  var counts = {};
+  libraryData.forEach(function(r) {
+    var l = r.lang || 'No language';
+    counts[l] = (counts[l] || 0) + 1;
+  });
+  return Object.keys(counts).map(function(l) {
+    return { name: l, count: counts[l], color: langColors[l] || '#444' };
+  }).sort(function(a, b) { return b.count - a.count; });
+})();
 
 var weeklyData = [
   { label: 'Feb 1-7', count: 15 },
@@ -555,41 +556,70 @@ var weeklyData = [
   { label: 'Mar 15-19', count: 3 },
 ];
 
-var topRepos = [
-  { rank: 1,  name: 'anthropics/claudes-c-compiler',           stars: 2547, lang: 'Rust',       lc: '#dea584', desc: 'Dependency-free C compiler in Rust \u2014 compiles Linux kernel' },
-  { rank: 2,  name: 'yaroslavyaroslav/OpenAI-sublime-text',    stars: 434,  lang: 'Python',     lc: '#3572A5', desc: 'Sublime Text AI assistant (gpt-5, Opus 4.6, Gemini 3, ollama)' },
-  { rank: 3,  name: 'Eric86777/vps-tcp-tune',                  stars: 245,  lang: 'Shell',      lc: '#89e051', desc: 'BBR3+FQ TCP network tuning script (docs by Opus 4.6)' },
-  { rank: 4,  name: '0xtresser/OpenClaw-Book',                 stars: 195,  lang: '',           lc: '#666',    desc: 'First book about OpenClaw, written with OpenCode + Opus 4.6' },
-  { rank: 5,  name: 'ucsandman/OpenClaw-Hierarchical-Memory',  stars: 110,  lang: '',           lc: '#666',    desc: 'Hierarchical memory system for OpenClaw agents on Opus 4.6' },
-  { rank: 6,  name: 'anyofai/poe',                             stars: 55,   lang: '',           lc: '#666',    desc: 'Poe subscription guide (GPT-5.2, Opus 4.6, Gemini 3.1)' },
-  { rank: 7,  name: '0xtresser/OpenCode-Book',                 stars: 42,   lang: '',           lc: '#666',    desc: 'Book about OpenCode, written with OpenCode + Opus 4.6' },
-  { rank: 8,  name: 'pjq/sap-ai-core-llm-proxy',              stars: 29,   lang: 'Python',     lc: '#3572A5', desc: 'SAP AI Core LLM proxy (GPT-5, Opus 4.6, Gemini)' },
-  { rank: 9,  name: 'johnpsasser/claude-code-prompt-optimizer', stars: 28,  lang: 'JavaScript', lc: '#f1e05a', desc: 'AI prompt optimization hook for Claude Code' },
-  { rank: 10, name: 'ThinkOffApp/ClawWatch',                   stars: 23,   lang: 'Kotlin',     lc: '#A97BFF', desc: 'First AI agent natively on a Galaxy Watch' },
-  { rank: 11, name: 'SovranAMR/claude-code-via-antigravity',   stars: 23,   lang: 'JavaScript', lc: '#f1e05a', desc: 'Free Claude Code via Google Antigravity' },
-  { rank: 12, name: 'BoostLabsAU/LLM-Orchestrator-coder-setup', stars: 18, lang: '',           lc: '#666',    desc: 'Orchestrator \u2194 Coding agent workflow with Opus 4.6' },
-  { rank: 13, name: 'chandika/openclaw-model-router',           stars: 14,  lang: '',           lc: '#666',    desc: 'Intelligent model routing: Sonnet 4.6 vs Opus 4.6' },
-  { rank: 14, name: 'brb-dreaming/biological-twin',             stars: 12,  lang: 'TypeScript', lc: '#3178c6', desc: 'Digital mirror born from your DNA \u2014 Hackathon entry' },
-  { rank: 15, name: 'flyryan/ai-news-aggregator',               stars: 11,  lang: 'Python',     lc: '#3572A5', desc: 'Multi-agent AI news pipeline with extended thinking' },
-];
+// Compute top repos dynamically from libraryData (top 15 by stars)
+var topRepos = libraryData.slice(0, 15).map(function(r, i) {
+  return { rank: i + 1, name: r.name, stars: r.stars, lang: r.lang, lc: r.lc, desc: r.desc };
+});
 
-var starDistrib = [
-  { label: '2,547 \u2605 (c-compiler)', value: 2547, color: '#00e5ff' },
-  { label: '100+ \u2605 (3 repos)',     value: 589,  color: '#b388ff' },
-  { label: '10-99 \u2605 (11 repos)',   value: 319,  color: '#69f0ae' },
-  { label: '1-9 \u2605 (36 repos)',     value: 119,  color: '#ffd740' },
-  { label: '0 \u2605 (48 repos)',       value: 1,    color: '#2a2a30' },
-];
+var CAT_LABELS = {
+  tool: 'Dev Tools', app: 'Application', agent: 'Agent / AI',
+  guide: 'Guide / Book', game: 'Game', bench: 'Benchmark',
+  sdk: 'SDK / Framework', infra: 'Infrastructure', other: 'Other'
+};
 
-var categoryData = [
-  { label: 'Developer Tools',     value: 22, color: '#00e5ff' },
-  { label: 'Applications',        value: 18, color: '#ff6b35' },
-  { label: 'Agents / Multi-agent', value: 12, color: '#b388ff' },
-  { label: 'Guides / Books',      value: 14, color: '#ff5277' },
-  { label: 'Games',               value: 8,  color: '#69f0ae' },
-  { label: 'Benchmarks / Evals',  value: 7,  color: '#ffd740' },
-  { label: 'Other / Misc',        value: 19, color: '#8a8a8e' },
-];
+function categorize(r) {
+  if (r.cat) return r.cat;
+  var d = (r.name + ' ' + r.desc).toLowerCase();
+  if (/game|shooter|rpg|defense|raft|doodie|zork|card game|nimmt/.test(d)) return 'game';
+  if (/book|guide|tutorial|course|written with|advocacy/.test(d)) return 'guide';
+  if (/bench|eval|comparison|benchmark|bluffbench|leaderboard|evals/.test(d)) return 'bench';
+  if (/agent|multi-agent|swarm|orchestrat|council|sentinel|firewall|swarmshield|panopticon/.test(d)) return 'agent';
+  if (/sdk|framework|library|langchain|litellm|ruby_llm|gateway|genkit|camel|owl|koog|floneum/.test(d)) return 'sdk';
+  if (/deploy|docker|aws-cdk|action\.yml|ci\/cd|pr review|pull-merge|infra|bedrock/.test(d)) return 'infra';
+  if (/proxy|cli|terminal|editor|ide|extension|plugin|tool|mcp|hook|skill|prompt|switch|config|setting|dotfile|code-power/.test(d)) return 'tool';
+  if (/system.prompt|cookbook|recipe|documentation|docs|eol|endoflife/.test(d)) return 'guide';
+  if (/chatbot|dashboard|app|tracker|finance|medical|legal|research|scanner|trade|hiring|resume|funding|weather|audio|radio|video|photo|image|teleprompter|parking|portfolio|band|blog/.test(d)) return 'app';
+  return 'other';
+}
+
+// Pre-compute categories
+libraryData.forEach(function(r) { r._cat = categorize(r); });
+
+// Compute star distribution dynamically
+var starDistrib = (function() {
+  var b = { s10k: 0, s1k: 0, s100: 0, s10: 0, s1: 0, s0: 0 };
+  var n = { s10k: 0, s1k: 0, s100: 0, s10: 0, s1: 0, s0: 0 };
+  libraryData.forEach(function(r) {
+    if (r.stars >= 10000) { b.s10k += r.stars; n.s10k++; }
+    else if (r.stars >= 1000) { b.s1k += r.stars; n.s1k++; }
+    else if (r.stars >= 100) { b.s100 += r.stars; n.s100++; }
+    else if (r.stars >= 10) { b.s10 += r.stars; n.s10++; }
+    else if (r.stars >= 1) { b.s1 += r.stars; n.s1++; }
+    else { b.s0++; n.s0++; }
+  });
+  var out = [];
+  if (n.s10k) out.push({ label: '10K+ \u2605 (' + n.s10k + ' repos)', value: b.s10k, color: '#00e5ff' });
+  if (n.s1k) out.push({ label: '1K-10K \u2605 (' + n.s1k + ' repos)', value: b.s1k, color: '#ff6b35' });
+  if (n.s100) out.push({ label: '100-999 \u2605 (' + n.s100 + ' repos)', value: b.s100, color: '#b388ff' });
+  if (n.s10) out.push({ label: '10-99 \u2605 (' + n.s10 + ' repos)', value: b.s10, color: '#69f0ae' });
+  if (n.s1) out.push({ label: '1-9 \u2605 (' + n.s1 + ' repos)', value: b.s1, color: '#ffd740' });
+  if (n.s0) out.push({ label: '0 \u2605 (' + n.s0 + ' repos)', value: Math.max(n.s0, 1), color: '#2a2a30' });
+  return out;
+})();
+
+// Compute category distribution dynamically
+var categoryData = (function() {
+  var catColors = { tool:'#00e5ff', app:'#ff6b35', agent:'#b388ff', guide:'#ff5277',
+    game:'#69f0ae', bench:'#ffd740', sdk:'#00d4ee', infra:'#00a1bb', other:'#8a8a8e' };
+  var counts = {};
+  libraryData.forEach(function(r) {
+    var c = categorize(r);
+    counts[c] = (counts[c] || 0) + 1;
+  });
+  return Object.keys(counts).map(function(c) {
+    return { label: CAT_LABELS[c] || c, value: counts[c], color: catColors[c] || '#666' };
+  }).sort(function(a, b) { return b.value - a.value; });
+})();
 
 var devTypeData = [
   { label: 'Active devs (>5 repos, pre-2025 acct)', value: 48, color: '#00e5ff' },
@@ -1272,30 +1302,6 @@ function renderSignals() {
     cards.appendChild(card);
   });
 }
-
-var CAT_LABELS = {
-  tool: 'Dev Tools', app: 'Application', agent: 'Agent / AI',
-  guide: 'Guide / Book', game: 'Game', bench: 'Benchmark',
-  sdk: 'SDK / Framework', infra: 'Infrastructure', other: 'Other'
-};
-
-function categorize(r) {
-  if (r.cat) return r.cat;
-  var d = (r.name + ' ' + r.desc).toLowerCase();
-  if (/game|shooter|rpg|defense|raft|doodie|zork|card game|nimmt/.test(d)) return 'game';
-  if (/book|guide|tutorial|course|written with|advocacy/.test(d)) return 'guide';
-  if (/bench|eval|comparison|benchmark|bluffbench|leaderboard|evals/.test(d)) return 'bench';
-  if (/agent|multi-agent|swarm|orchestrat|council|sentinel|firewall|swarmshield|panopticon/.test(d)) return 'agent';
-  if (/sdk|framework|library|langchain|litellm|ruby_llm|gateway|genkit|camel|owl|koog|floneum/.test(d)) return 'sdk';
-  if (/deploy|docker|aws-cdk|action\.yml|ci\/cd|pr review|pull-merge|infra|bedrock/.test(d)) return 'infra';
-  if (/proxy|cli|terminal|editor|ide|extension|plugin|tool|mcp|hook|skill|prompt|switch|config|setting|dotfile|code-power/.test(d)) return 'tool';
-  if (/system.prompt|cookbook|recipe|documentation|docs|eol|endoflife/.test(d)) return 'guide';
-  if (/chatbot|dashboard|app|tracker|finance|medical|legal|research|scanner|trade|hiring|resume|funding|weather|audio|radio|video|photo|image|teleprompter|parking|portfolio|band|blog/.test(d)) return 'app';
-  return 'other';
-}
-
-// Pre-compute categories
-libraryData.forEach(function(r) { r._cat = categorize(r); });
 
 function renderLibrary() {
   var controls = document.getElementById('lib-controls');
