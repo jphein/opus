@@ -249,7 +249,7 @@
   <!-- STAT STRIP -->
   <div class="stat-strip">
     <div class="stat-card">
-      <div class="stat-number cyan" data-count="217">0</div>
+      <div class="stat-number cyan" data-count="234">0</div>
       <div class="stat-label">Public Repos</div>
     </div>
     <div class="stat-card">
@@ -261,7 +261,7 @@
       <div class="stat-label">Languages</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number green" data-count="191">0</div>
+      <div class="stat-number green" data-count="208">0</div>
       <div class="stat-label">Developers</div>
     </div>
     <div class="stat-card">
@@ -440,7 +440,7 @@
       <span class="section-num">07</span>
       <h2>The Bigger Picture</h2>
     </div>
-    <p class="section-note">Opus 4.6 is available to all GitHub Copilot tiers. These 217 repos are the visible tip — the model is silently powering millions of Copilot sessions.</p>
+    <p class="section-note">Opus 4.6 is available to all GitHub Copilot tiers. These 234 repos are the visible tip — the model is silently powering millions of Copilot sessions.</p>
     <div class="chart-grid-3" id="context-grid"></div>
   </section>
 
@@ -588,7 +588,7 @@ var categoryData = [
 
 var devTypeData = [
   { label: 'Active devs (>5 repos, pre-2025 acct)', value: 48, color: '#00e5ff' },
-  { label: 'Dormant awakened (old acct, low activity)', value: 18, color: '#ff5277' },
+  { label: 'Dormant awakened (old acct, low activity)', value: 26, color: '#ff5277' },
   { label: 'Recent accounts (2025)',                    value: 11, color: '#b388ff' },
   { label: 'Brand new accounts (2026)',                 value: 9,  color: '#ffd740' },
 ];
@@ -602,24 +602,32 @@ var accountAgeData = [
 ];
 
 var dormantDevs = [
-  { name: 'dr3d',          created: '2009', age: '17yr', repos: 5,  project: 'SomaFM-for-CardPuter', desc: 'MIT Media Lab OG. "Started with asm & fortran." 5 repos in 17 years.' },
-  { name: 'dorman',        created: '2009', age: '16yr', repos: 27, project: 'threatlegionCLI', desc: 'Cyber Threat Intel specialist. Built agentic vuln scanner with Opus.' },
-  { name: 'chandika',      created: '2010', age: '16yr', repos: 15, project: 'openclaw-model-router', desc: '15.7yr account, <1 repo/yr. Now routing Opus 4.6 vs Sonnet.' },
-  { name: 'wealth',        created: '2011', age: '15yr', repos: 18, project: 'crystalclaw', desc: '15yr account, 18 repos. Vibe-coded picoclaw port to Crystal.' },
-  { name: 'esagduyu',      created: '2013', age: '12yr', repos: 4,  project: 'project-tiro', desc: 'Data Science Mgr @ Wealthsimple. 4 repos in 12 YEARS. Built reading OS.' },
-  { name: 'todsawat',      created: '2013', age: '13yr', repos: 8,  project: 'set-financial-app', desc: '12.6yr account, 8 repos total. Built Thai stock app with Opus.' },
-  { name: 'jphein',        created: '2016', age: '10yr', repos: 40, project: 'speech-to-cli + 9 more', desc: 'Re-energized: 12 new repos in 6 weeks, 7 with Opus commits.' },
-  { name: 'johnpsasser',   created: '2016', age: '10yr', repos: 9,  project: 'prompt-optimizer', desc: '10yr account, 9 repos. Built Claude Code prompt optimizer, 28\u2605.' },
-  { name: 'futureCreator', created: '2016', age: '10yr', repos: 15, project: 'v-terminal', desc: 'Kubestronaut. 15 repos in 10 years. Built Tauri terminal emulator.' },
-  { name: 'Patysko',       created: '2016', age: '9yr',  repos: 6,  project: 'ARIA', desc: '9.4yr account, 6 repos. Built AI agent with self-improvement + memory.' },
-  { name: 'srinichillara', created: '2016', age: '10yr', repos: 1,  project: 'vibe-pm', desc: 'First ever repo! PM tool with Opus 4.6.' },
-  { name: 'voelspriet',    created: '2017', age: '9yr',  repos: 8,  project: 'flipside', desc: 'AI researcher "Henk van Ess." 8 repos in 8.5yr. Built contract analyzer.' },
-  { name: 'dmbartles',     created: '2017', age: '9yr',  repos: 14, project: 'math-defense', desc: 'Consumer finance. 14 repos in 8.5yr. Built math defense game.' },
-  { name: 'njlevy',        created: '2017', age: '9yr',  repos: 9,  project: 'anytype-export', desc: '9yr account, 9 repos. Anytype pages \u2192 static HTML + Firebase.' },
-  { name: 'gorduan',       created: '2018', age: '8yr',  repos: 5,  project: 'paragraf', desc: '8yr account, ONLY 5 repos. Built MCP Server for German law search.' },
-  { name: 'taka-avantgarde', created: '2020', age: '6yr', repos: 1, project: 'Due-diligence-engine', desc: 'Founder/CEO. ONE repo in 6 years. AI-powered VC due diligence.' },
-  { name: 'kv100',         created: '2020', age: '6yr',  repos: 5,  project: 'respiro-macos', desc: '6yr account, 5 repos. macOS Menu Bar AI Stress Coach.' },
-  { name: 'lunard',        created: '2014', age: '12yr', repos: 17, project: 'startup-eu-scout', desc: '12yr account. Built EU funding discovery Electron app with Opus.' },
+  { name: 'knan',            created: '2009', age: '17yr', repos: 3,  project: 'ensure', desc: '17.1yr account, 3 repos (0.2/yr). Most extreme dormancy \u2192 Opus awakening.' },
+  { name: 'dr3d',            created: '2009', age: '17yr', repos: 5,  project: 'SomaFM-for-CardPuter', desc: 'MIT Media Lab OG. "Started with asm & fortran." 5 repos in 17 years.' },
+  { name: 'dorman',          created: '2009', age: '16yr', repos: 27, project: 'threatlegionCLI', desc: 'Cyber Threat Intel. 16yr account. Built agentic vuln scanner with Opus.' },
+  { name: 'anthonyterrell',  created: '2010', age: '15yr', repos: 12, project: 'hookline', desc: 'Chicago dev, 15yr/12repos. Built FastAPI payment webhook service.' },
+  { name: 'chandika',        created: '2010', age: '16yr', repos: 15, project: 'openclaw-model-router', desc: '15.7yr account, <1 repo/yr. Now routing Opus 4.6 vs Sonnet.' },
+  { name: 'wealth',          created: '2011', age: '15yr', repos: 18, project: 'crystalclaw', desc: '15yr account, 18 repos. Vibe-coded picoclaw port to Crystal.' },
+  { name: 'rsonnad',         created: '2013', age: '13yr', repos: 4,  project: 'alpacapps', desc: '"I do wingsie." 4 repos in 12.6 years. Now building with Opus.' },
+  { name: 'esagduyu',        created: '2013', age: '12yr', repos: 4,  project: 'project-tiro', desc: 'Data Science Mgr @ Wealthsimple. 4 repos in 12 YEARS. Built reading OS.' },
+  { name: 'marchiesa',       created: '2013', age: '13yr', repos: 7,  project: 'proof-lifting', desc: '12.6yr/7repos. Proof extraction from Dafny/Boogie/SMT verification.' },
+  { name: 'todsawat',        created: '2013', age: '13yr', repos: 8,  project: 'set-financial-app', desc: '12.6yr account, 8 repos total. Built Thai stock app with Opus.' },
+  { name: 'knazark',         created: '2014', age: '12yr', repos: 1,  project: 'happy-farming', desc: '12yr account, ONE repo. 0.08 repos/yr. Then Opus 4.6 happened.' },
+  { name: 'lunard',          created: '2014', age: '12yr', repos: 17, project: 'startup-eu-scout', desc: '12yr account. Built EU funding discovery Electron app with Opus.' },
+  { name: 'figrita',         created: '2015', age: '11yr', repos: 9,  project: 'silvia', desc: '11yr/9repos. Built FOSS modular video synthesizer for live performance.' },
+  { name: 'jshin42',         created: '2015', age: '10yr', repos: 4,  project: 'vitalityweeks-site', desc: '10yr account, 4 repos. iOS app support site co-authored with Opus.' },
+  { name: 'jphein',          created: '2016', age: '10yr', repos: 40, project: 'speech-to-cli + 9 more', desc: 'Re-energized: 12 new repos in 6 weeks, 7 with Opus commits.' },
+  { name: 'johnpsasser',     created: '2016', age: '10yr', repos: 9,  project: 'prompt-optimizer', desc: '10yr account, 9 repos. Built Claude Code prompt optimizer, 28\u2605.' },
+  { name: 'futureCreator',   created: '2016', age: '10yr', repos: 15, project: 'v-terminal', desc: 'Kubestronaut. 15 repos in 10 years. Built Tauri terminal emulator.' },
+  { name: 'Patysko',         created: '2016', age: '9yr',  repos: 6,  project: 'ARIA', desc: '9.4yr account, 6 repos. Built AI agent with self-improvement + memory.' },
+  { name: 'srinichillara',   created: '2016', age: '10yr', repos: 1,  project: 'vibe-pm', desc: 'First ever repo! PM tool with Opus 4.6.' },
+  { name: 'voelspriet',      created: '2017', age: '9yr',  repos: 8,  project: 'flipside', desc: 'AI researcher "Henk van Ess." 8 repos in 8.5yr. Built contract analyzer.' },
+  { name: 'njlevy',          created: '2017', age: '9yr',  repos: 9,  project: 'anytype-export', desc: '9yr account, 9 repos. Anytype pages \u2192 static HTML + Firebase.' },
+  { name: 'timvanhelsdingen', created: '2017', age: '8yr', repos: 3,  project: 'arkestrator', desc: '8.4yr, 3 repos (0.4/yr). Built AI agent orchestration platform.' },
+  { name: 'gorduan',         created: '2018', age: '8yr',  repos: 5,  project: 'paragraf', desc: '8yr account, ONLY 5 repos. Built MCP Server for German law search.' },
+  { name: 'taka-avantgarde', created: '2020', age: '6yr',  repos: 1,  project: 'Due-diligence-engine', desc: 'Founder/CEO. ONE repo in 6 years. AI-powered VC due diligence.' },
+  { name: 'kv100',           created: '2020', age: '6yr',  repos: 5,  project: 'respiro-macos', desc: '6yr account, 5 repos. macOS Menu Bar AI Stress Coach.' },
+  { name: 'FilipRut',        created: '2020', age: '6yr',  repos: 1,  project: 'portfolio', desc: '5.5yr account. ONE repo, with Opus 4.6 commits.' },
 ];
 
 var newDevs = [
@@ -1046,6 +1054,24 @@ var libraryData = [
   { name: 'RheingoldAI/march-madness-ai-2026', stars: 0, lang: '', lc: '#666', signal: 'explicit', desc: '2026 NCAA predictions from Opus 4.6, GPT-5.4, Gemini 3.1 Pro, DeepSeek v3.2' },
   { name: 'bire5/image-chatbot', stars: 0, lang: 'JavaScript', lc: '#f1e05a', signal: 'explicit', desc: 'React chatbot using Opus 4.6 vision to identify and sort images' },
   { name: 'gugosf114/drift-auditor', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Multi-turn drift diagnostic — correction persistence analysis for LLM conversations' },
+  // === WAVE 3: RE-ENERGIZED VETERAN REPOS ===
+  { name: 'anthonyterrell/hookline', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'FastAPI payment webhook service — 15yr account, 12 repos, co-authored with Opus' },
+  { name: 'rsonnad/alpacapps', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: '12.6yr dormant account (4 repos total). Now building with Opus 4.6.' },
+  { name: 'marchiesa/proof-lifting', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'Proof extraction from Dafny/Boogie/SMT verification — 12.6yr/7repos account' },
+  { name: 'knazark/happy-farming', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: '12yr account, ONE repo ever (0.08/yr). Then Opus 4.6 happened.' },
+  { name: 'figrita/silvia', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'FOSS modular video synthesizer for live performance — 11yr dormant account' },
+  { name: 'jshin42/vitalityweeks-site', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'iOS app support site — 10yr account with only 4 repos' },
+  { name: 'timvanhelsdingen/arkestrator', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'AI agent orchestration platform — 8.4yr account, only 3 repos (0.4/yr)' },
+  { name: 'FilipRut/portfolio', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: '5.5yr account, ONE repo. Portfolio site co-authored with Opus 4.6.' },
+  { name: 'deepai-org/growing-code', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'DeepAI (8.8yr org, "AI image/video recognition"). Code evolution experiments.' },
+  { name: 'Ricardo-Marques/betaflight-tuning-helper', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'Betaflight drone tuning — 11.3yr account, 22 repos, co-authored with Opus' },
+  { name: 'seanahrens/unarxiv', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: '16.6yr account, 25 repos. ArXiv tooling co-authored with Opus 4.6.' },
+  { name: 'omnomdombomb/cmu-scholars-metadata-harvester', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'CMU Scholars metadata harvester — 5.7yr account, 3 repos (0.5/yr)' },
+  { name: 'indexzero/vlurp', stars: 1, lang: 'JavaScript', lc: '#f1e05a', signal: 'commit', desc: '"vlurp === (vibes && slurp)" — supply-chain dep tool. 18yr account, early Node.js pioneer.' },
+  { name: 'adamswbrown/ukfoodfacts', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'UK food chain nutrition data (105 chains). Principal Consultant @ Altra, 9yr acct.' },
+  { name: 'jinchiwei/aria_causal-inference', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'Causal inference pipeline with forest plots — 8yr account, 12 repos.' },
+  { name: 'njlevy/anytype-export', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'Anytype pages \u2192 static HTML with RTL + Firebase — 9yr account, 9 repos.' },
+  { name: 'davekiss/homedaysband.com', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'commit', desc: 'Band website, Next.js 15\u219216 upgrade — 14.3yr account, co-authored with Opus.' },
 ];
 
 // Sort by stars descending
