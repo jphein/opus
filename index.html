@@ -178,9 +178,14 @@
   .filter-btn.active { background: rgba(0,229,255,0.1); border-color: var(--accent-cyan); color: var(--accent-cyan); }
   .library-count { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 16px; }
   .lib-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
-  .lib-row { display: grid; grid-template-columns: 1fr 90px 70px 80px; gap: 12px; padding: 12px 16px; background: var(--surface); align-items: center; transition: background 0.15s; }
+  .lib-row { display: grid; grid-template-columns: 1fr 90px 90px 70px 80px; gap: 12px; padding: 12px 16px; background: var(--surface); align-items: center; transition: background 0.15s; }
+  @media (max-width: 768px) { .lib-row { grid-template-columns: 1fr 70px 60px 80px; } .lib-cat { display: none; } }
   .lib-row:hover { background: var(--surface-2); }
   .lib-row.header { background: var(--bg); position: sticky; top: 0; z-index: 5; }
+  .lib-row.header > div { cursor: pointer; user-select: none; transition: color 0.15s; }
+  .lib-row.header > div:hover { color: var(--accent-cyan); }
+  .lib-row.header > div.sort-active { color: var(--accent-cyan); }
+  .lib-cat { font-size: 9px; color: var(--text-dim); letter-spacing: 0.5px; }
   .lib-name { min-width: 0; }
   .lib-name a { color: var(--accent-cyan); text-decoration: none; font-size: 11px; font-weight: 500; }
   .lib-name a:hover { color: #fff; }
@@ -1268,13 +1273,37 @@ function renderSignals() {
   });
 }
 
+var CAT_LABELS = {
+  tool: 'Dev Tools', app: 'Application', agent: 'Agent / AI',
+  guide: 'Guide / Book', game: 'Game', bench: 'Benchmark',
+  sdk: 'SDK / Framework', infra: 'Infrastructure', other: 'Other'
+};
+
+function categorize(r) {
+  if (r.cat) return r.cat;
+  var d = (r.name + ' ' + r.desc).toLowerCase();
+  if (/game|shooter|rpg|defense|raft|doodie|zork|card game|nimmt/.test(d)) return 'game';
+  if (/book|guide|tutorial|course|written with|advocacy/.test(d)) return 'guide';
+  if (/bench|eval|comparison|benchmark|bluffbench|leaderboard|evals/.test(d)) return 'bench';
+  if (/agent|multi-agent|swarm|orchestrat|council|sentinel|firewall|swarmshield|panopticon/.test(d)) return 'agent';
+  if (/sdk|framework|library|langchain|litellm|ruby_llm|gateway|genkit|camel|owl|koog|floneum/.test(d)) return 'sdk';
+  if (/deploy|docker|aws-cdk|action\.yml|ci\/cd|pr review|pull-merge|infra|bedrock/.test(d)) return 'infra';
+  if (/proxy|cli|terminal|editor|ide|extension|plugin|tool|mcp|hook|skill|prompt|switch|config|setting|dotfile|code-power/.test(d)) return 'tool';
+  if (/system.prompt|cookbook|recipe|documentation|docs|eol|endoflife/.test(d)) return 'guide';
+  if (/chatbot|dashboard|app|tracker|finance|medical|legal|research|scanner|trade|hiring|resume|funding|weather|audio|radio|video|photo|image|teleprompter|parking|portfolio|band|blog/.test(d)) return 'app';
+  return 'other';
+}
+
+// Pre-compute categories
+libraryData.forEach(function(r) { r._cat = categorize(r); });
+
 function renderLibrary() {
   var controls = document.getElementById('lib-controls');
   var countEl = document.getElementById('lib-count');
   var grid = document.getElementById('lib-grid');
 
   // Search box
-  var search = el('input', { className: 'library-search', placeholder: 'Search repos, descriptions, languages...', type: 'text' });
+  var search = el('input', { className: 'library-search', placeholder: 'Search repos, descriptions, languages, categories...', type: 'text' });
   controls.appendChild(search);
 
   // Filter buttons
@@ -1293,13 +1322,45 @@ function renderLibrary() {
     controls.appendChild(btn);
   });
 
-  // Header row
-  grid.appendChild(el('div', { className: 'lib-row header' }, [
-    el('div', { className: 'bar-label', style: { textAlign: 'left', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Repository' }),
-    el('div', { className: 'bar-label', style: { textAlign: 'left', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Language' }),
-    el('div', { className: 'bar-label', style: { textAlign: 'right', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Stars' }),
-    el('div', { className: 'bar-label', style: { textAlign: 'right', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Signal' })
-  ]));
+  // Sortable header
+  var sortCol = 'stars';
+  var sortDir = -1; // -1 = desc, 1 = asc
+  var colDefs = [
+    { key: 'name',   label: 'Repository', align: 'left' },
+    { key: 'lang',   label: 'Language',   align: 'left' },
+    { key: 'cat',    label: 'Category',   align: 'left' },
+    { key: 'stars',  label: 'Stars',      align: 'right' },
+    { key: 'signal', label: 'Signal',     align: 'right' }
+  ];
+
+  var headerCells = [];
+  var headerRow = el('div', { className: 'lib-row header' });
+  colDefs.forEach(function(col) {
+    var hdr = el('div', {
+      className: 'bar-label' + (col.key === sortCol ? ' sort-active' : '') + (col.key === 'cat' ? ' lib-cat' : ''),
+      style: { textAlign: col.align, letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px', cursor: 'pointer' },
+      textContent: col.label + (col.key === sortCol ? (sortDir === -1 ? ' \u25BC' : ' \u25B2') : '')
+    });
+    hdr._colKey = col.key;
+    hdr.addEventListener('click', function() {
+      if (sortCol === col.key) { sortDir *= -1; }
+      else { sortCol = col.key; sortDir = col.key === 'stars' ? -1 : 1; }
+      updateHeaders();
+      sortAndReorder();
+    });
+    headerRow.appendChild(hdr);
+    headerCells.push(hdr);
+  });
+  grid.appendChild(headerRow);
+
+  function updateHeaders() {
+    headerCells.forEach(function(h) {
+      var k = h._colKey;
+      var col = colDefs.find(function(c) { return c.key === k; });
+      h.className = 'bar-label' + (k === sortCol ? ' sort-active' : '') + (k === 'cat' ? ' lib-cat' : '');
+      h.textContent = col.label + (k === sortCol ? (sortDir === -1 ? ' \u25BC' : ' \u25B2') : '');
+    });
+  }
 
   // Rows
   var rows = [];
@@ -1311,14 +1372,35 @@ function renderLibrary() {
     if (r.lang) { langCell.appendChild(el('span', { className: 'lang-dot', style: { background: r.lc } })); langCell.appendChild(document.createTextNode(r.lang)); }
     else { langCell.textContent = '\u2014'; }
 
+    var catCell = el('div', { className: 'lib-cat', textContent: CAT_LABELS[r._cat] || r._cat });
     var starsCell = el('div', { className: 'lib-stars', textContent: r.stars > 0 ? r.stars.toLocaleString() + ' \u2605' : '\u2014' });
     var signalCell = el('div', { className: 'lib-signal' }, [el('span', { className: 'signal-tag ' + SIGNAL_CLASSES[r.signal], textContent: SIGNAL_LABELS[r.signal] })]);
 
-    var row = el('div', { className: 'lib-row' }, [nameCell, langCell, starsCell, signalCell]);
+    var row = el('div', { className: 'lib-row' }, [nameCell, langCell, catCell, starsCell, signalCell]);
     row._data = r;
     grid.appendChild(row);
     rows.push(row);
   });
+
+  function getSortValue(r, col) {
+    if (col === 'stars') return r.stars;
+    if (col === 'name') return r.name.toLowerCase();
+    if (col === 'lang') return (r.lang || 'zzz').toLowerCase();
+    if (col === 'cat') return (r._cat || 'zzz').toLowerCase();
+    if (col === 'signal') return r.signal;
+    return '';
+  }
+
+  function sortAndReorder() {
+    rows.sort(function(a, b) {
+      var av = getSortValue(a._data, sortCol);
+      var bv = getSortValue(b._data, sortCol);
+      if (av < bv) return -1 * sortDir;
+      if (av > bv) return 1 * sortDir;
+      return 0;
+    });
+    rows.forEach(function(row) { grid.appendChild(row); });
+  }
 
   function applyFilters() {
     var q = search.value.toLowerCase();
@@ -1326,7 +1408,7 @@ function renderLibrary() {
     rows.forEach(function(row) {
       var d = row._data;
       var matchesFilter = !activeFilter || d.signal === activeFilter;
-      var matchesSearch = !q || (d.name + ' ' + d.desc + ' ' + (d.lang || '')).toLowerCase().indexOf(q) !== -1;
+      var matchesSearch = !q || (d.name + ' ' + d.desc + ' ' + (d.lang || '') + ' ' + (CAT_LABELS[d._cat] || '')).toLowerCase().indexOf(q) !== -1;
       if (matchesFilter && matchesSearch) {
         row.classList.remove('lib-hidden');
         visible++;
