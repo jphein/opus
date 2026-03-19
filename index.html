@@ -354,7 +354,7 @@
       <span class="section-num">03</span>
       <h2>Who's Building</h2>
     </div>
-    <p class="section-note">We profiled all 83 individual developers who published Opus 4.6 repos. 29% are either brand new to GitHub or old accounts that were effectively dormant before Opus 4.6 dropped.</p>
+    <p class="section-note">We profiled 191 individual developers who published Opus 4.6 repos. 18 are "re-energized veterans" &mdash; accounts 6-17 years old that were effectively dormant (some with as few as 1 repo in a decade) before Opus 4.6 woke them up.</p>
 
     <div class="chart-grid" style="margin-bottom:24px;">
       <div class="chart-box rose reveal">
@@ -588,9 +588,9 @@ var categoryData = [
 
 var devTypeData = [
   { label: 'Active devs (>5 repos, pre-2025 acct)', value: 48, color: '#00e5ff' },
-  { label: 'Dormant awakened (\u22645 repos, old acct)',  value: 15, color: '#ff5277' },
-  { label: 'Recent accounts (2025)',                     value: 11, color: '#b388ff' },
-  { label: 'Brand new accounts (2026)',                  value: 9,  color: '#ffd740' },
+  { label: 'Dormant awakened (old acct, low activity)', value: 18, color: '#ff5277' },
+  { label: 'Recent accounts (2025)',                    value: 11, color: '#b388ff' },
+  { label: 'Brand new accounts (2026)',                 value: 9,  color: '#ffd740' },
 ];
 
 var accountAgeData = [
@@ -602,16 +602,24 @@ var accountAgeData = [
 ];
 
 var dormantDevs = [
-  { name: 'dr3d',          created: '2009', age: '17yr', repos: 5,  project: 'SomaFM-for-CardPuter', desc: 'Internet radio for M5Stack' },
-  { name: 'esagduyu',      created: '2013', age: '13yr', repos: 4,  project: 'project-tiro', desc: 'Reading OS for the AI age' },
-  { name: 'davidrz',       created: '2013', age: '13yr', repos: 4,  project: 'Opus 4.6 project', desc: '13yr dormant, now building' },
-  { name: 'srinichillara', created: '2016', age: '10yr', repos: 1,  project: 'vibe-pm', desc: 'First ever repo! PM tool with Opus' },
-  { name: 'ronnsen123',    created: '2016', age: '10yr', repos: 1,  project: 'Opus project', desc: 'Account since 2016, 1 repo total' },
-  { name: 'tomasmihalyi',  created: '2016', age: '10yr', repos: 5,  project: 'Opus project', desc: 'Reactivated after a decade' },
-  { name: 'bryanjpg',      created: '2019', age: '7yr',  repos: 4,  project: 'Opus project', desc: '7yr old account, barely used' },
-  { name: 'rdy4trvl',      created: '2016', age: '10yr', repos: 4,  project: 'Opus project', desc: 'Dormant 10yr account' },
-  { name: 'brb-dreaming',  created: '2024', age: '2yr',  repos: 4,  project: 'biological-twin', desc: 'DNA mirror \u2014 hackathon entry, 12\u2605' },
-  { name: 'jphein',        created: '2016', age: '10yr', repos: 40, project: 'speech-to-cli + 9 more', desc: 'Re-energized: 12 new repos in Mar 2026, 7 w/ Opus commits' },
+  { name: 'dr3d',          created: '2009', age: '17yr', repos: 5,  project: 'SomaFM-for-CardPuter', desc: 'MIT Media Lab OG. "Started with asm & fortran." 5 repos in 17 years.' },
+  { name: 'dorman',        created: '2009', age: '16yr', repos: 27, project: 'threatlegionCLI', desc: 'Cyber Threat Intel specialist. Built agentic vuln scanner with Opus.' },
+  { name: 'chandika',      created: '2010', age: '16yr', repos: 15, project: 'openclaw-model-router', desc: '15.7yr account, <1 repo/yr. Now routing Opus 4.6 vs Sonnet.' },
+  { name: 'wealth',        created: '2011', age: '15yr', repos: 18, project: 'crystalclaw', desc: '15yr account, 18 repos. Vibe-coded picoclaw port to Crystal.' },
+  { name: 'esagduyu',      created: '2013', age: '12yr', repos: 4,  project: 'project-tiro', desc: 'Data Science Mgr @ Wealthsimple. 4 repos in 12 YEARS. Built reading OS.' },
+  { name: 'todsawat',      created: '2013', age: '13yr', repos: 8,  project: 'set-financial-app', desc: '12.6yr account, 8 repos total. Built Thai stock app with Opus.' },
+  { name: 'jphein',        created: '2016', age: '10yr', repos: 40, project: 'speech-to-cli + 9 more', desc: 'Re-energized: 12 new repos in 6 weeks, 7 with Opus commits.' },
+  { name: 'johnpsasser',   created: '2016', age: '10yr', repos: 9,  project: 'prompt-optimizer', desc: '10yr account, 9 repos. Built Claude Code prompt optimizer, 28\u2605.' },
+  { name: 'futureCreator', created: '2016', age: '10yr', repos: 15, project: 'v-terminal', desc: 'Kubestronaut. 15 repos in 10 years. Built Tauri terminal emulator.' },
+  { name: 'Patysko',       created: '2016', age: '9yr',  repos: 6,  project: 'ARIA', desc: '9.4yr account, 6 repos. Built AI agent with self-improvement + memory.' },
+  { name: 'srinichillara', created: '2016', age: '10yr', repos: 1,  project: 'vibe-pm', desc: 'First ever repo! PM tool with Opus 4.6.' },
+  { name: 'voelspriet',    created: '2017', age: '9yr',  repos: 8,  project: 'flipside', desc: 'AI researcher "Henk van Ess." 8 repos in 8.5yr. Built contract analyzer.' },
+  { name: 'dmbartles',     created: '2017', age: '9yr',  repos: 14, project: 'math-defense', desc: 'Consumer finance. 14 repos in 8.5yr. Built math defense game.' },
+  { name: 'njlevy',        created: '2017', age: '9yr',  repos: 9,  project: 'anytype-export', desc: '9yr account, 9 repos. Anytype pages \u2192 static HTML + Firebase.' },
+  { name: 'gorduan',       created: '2018', age: '8yr',  repos: 5,  project: 'paragraf', desc: '8yr account, ONLY 5 repos. Built MCP Server for German law search.' },
+  { name: 'taka-avantgarde', created: '2020', age: '6yr', repos: 1, project: 'Due-diligence-engine', desc: 'Founder/CEO. ONE repo in 6 years. AI-powered VC due diligence.' },
+  { name: 'kv100',         created: '2020', age: '6yr',  repos: 5,  project: 'respiro-macos', desc: '6yr account, 5 repos. macOS Menu Bar AI Stress Coach.' },
+  { name: 'lunard',        created: '2014', age: '12yr', repos: 17, project: 'startup-eu-scout', desc: '12yr account. Built EU funding discovery Electron app with Opus.' },
 ];
 
 var newDevs = [
