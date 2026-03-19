@@ -254,19 +254,19 @@
   <!-- STAT STRIP -->
   <div class="stat-strip">
     <div class="stat-card">
-      <div class="stat-number cyan" data-count="234">0</div>
+      <div class="stat-number cyan" data-count="245">0</div>
       <div class="stat-label">Public Repos</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number orange" data-count="1322852">0</div>
+      <div class="stat-number orange" data-count="1403019" data-format="compact">0</div>
       <div class="stat-label">Combined Stars</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number violet" data-count="22">0</div>
+      <div class="stat-number violet" data-count="24">0</div>
       <div class="stat-label">Languages</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number green" data-count="208">0</div>
+      <div class="stat-number green" data-count="218">0</div>
       <div class="stat-label">Developers</div>
     </div>
     <div class="stat-card">
@@ -326,7 +326,7 @@
       <span class="section-num">02</span>
       <h2>The Numbers</h2>
     </div>
-    <p class="section-note">Data from GitHub Search API, commit signatures, code search, Topics (claude-opus-4-6, opus-4-6), and user profile analysis of 208 unique developers across 234 repos. All charts computed dynamically from the library.</p>
+    <p class="section-note">Data from GitHub Search API, commit signatures, code search, Topics (claude-opus-4-6, opus-4-6), and user profile analysis of 218 unique developers across 245 repos. All charts computed dynamically from the library.</p>
     <div class="chart-grid">
       <div class="chart-box cyan reveal">
         <div class="chart-title">Repos created per week (since release)</div>
@@ -392,28 +392,50 @@
       <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-orange);margin-bottom:12px;">Cerebral Valley x Anthropic · Feb 10-16, 2026</div>
       <div style="font-family:var(--font-serif);font-size:28px;margin-bottom:12px;">"Built with Opus 4.6" Hackathon</div>
       <div style="font-size:12px;color:var(--text-dim);line-height:1.8;max-width:700px;">
-        500 selected participants. $500 in API credits each. Max team size of two. Everything open source, built from scratch. All powered by Claude Opus 4.6 with extended thinking and 1M context.
+        13,000 applicants. 500 selected. $500 in API credits each. Max team size of two. 227 projects submitted. Everything open source, built from scratch. All powered by Claude Opus 4.6 with extended thinking and 1M context. Winners presented at Claude Code's 1st Birthday Party in San Francisco (Feb 21, 2026).
       </div>
       <div class="hackathon-stats">
         <div>
-          <div class="stat-number orange" style="font-size:24px;">500</div>
-          <div class="stat-label">Participants</div>
+          <div class="stat-number orange" style="font-size:24px;">13K</div>
+          <div class="stat-label">Applicants</div>
         </div>
         <div>
-          <div class="stat-number gold" style="font-size:24px;">$100K</div>
+          <div class="stat-number gold" style="font-size:24px;">500</div>
+          <div class="stat-label">Selected</div>
+        </div>
+        <div>
+          <div class="stat-number green" style="font-size:24px;">$100K</div>
           <div class="stat-label">In API Credits</div>
         </div>
         <div>
-          <div class="stat-number green" style="font-size:24px;">$50K</div>
-          <div class="stat-label">First Place</div>
+          <div class="stat-number cyan" style="font-size:24px;">227</div>
+          <div class="stat-label">Projects</div>
         </div>
         <div>
-          <div class="stat-number cyan" style="font-size:24px;">7 days</div>
+          <div class="stat-number violet" style="font-size:24px;">7 days</div>
           <div class="stat-label">Duration</div>
         </div>
+      </div>
+    </div>
+    <div id="hackathon-winners" class="reveal"></div>
+    <div class="hackathon-box reveal" style="margin-top:24px;">
+      <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:12px;">Global Ecosystem · 14 Events · 2024-2026</div>
+      <div style="font-family:var(--font-serif);font-size:22px;margin-bottom:12px;">Regional Claude Hackathons on Devpost</div>
+      <div style="font-size:12px;color:var(--text-dim);line-height:1.8;max-width:700px;">
+        321 projects across 14 hackathons worldwide: London, Toronto, Cambridge, Maryland, USC, UW Seattle, Georgia Tech, Rice, UCSD, UF, SK AI Summit Korea, and more. From medical AI to financial modeling to educational tools.
+      </div>
+      <div class="hackathon-stats">
         <div>
-          <div class="stat-number violet" style="font-size:24px;">2 max</div>
-          <div class="stat-label">Team Size</div>
+          <div class="stat-number cyan" style="font-size:24px;">14</div>
+          <div class="stat-label">Hackathons</div>
+        </div>
+        <div>
+          <div class="stat-number green" style="font-size:24px;">321</div>
+          <div class="stat-label">Devpost Projects</div>
+        </div>
+        <div>
+          <div class="stat-number orange" style="font-size:24px;">8+</div>
+          <div class="stat-label">Countries</div>
         </div>
       </div>
     </div>
@@ -445,7 +467,7 @@
       <span class="section-num">07</span>
       <h2>The Bigger Picture</h2>
     </div>
-    <p class="section-note">Opus 4.6 is available to all GitHub Copilot tiers. These 234 repos are the visible tip — the model is silently powering millions of Copilot sessions.</p>
+    <p class="section-note">Opus 4.6 is available to all GitHub Copilot tiers. These 245 repos are the visible tip — the model is silently powering millions of Copilot sessions.</p>
     <div class="chart-grid-3" id="context-grid"></div>
   </section>
 
@@ -528,24 +550,6 @@
 <script>
 // ── ALL DATA ──
 
-// Compute langData dynamically from libraryData
-var langData = (function() {
-  var langColors = { 'Python':'#3572A5','JavaScript':'#f1e05a','HTML':'#e34c26','TypeScript':'#3178c6',
-    'Rust':'#dea584','Shell':'#89e051','Go':'#00ADD8','Swift':'#F05138','Kotlin':'#A97BFF',
-    'C++':'#f34b7d','Zig':'#ec915c','CSS':'#563d7c','Dart':'#00B4AB','Java':'#b07219',
-    'Ruby':'#701516','Svelte':'#ff3e00','Solidity':'#AA6746','Elixir':'#6e4a7e','Crystal':'#000100',
-    'R':'#198CE7','C#':'#178600','PHP':'#4F5D95','Astro':'#ff5a03','Emacs Lisp':'#c065db',
-    'Jupyter Notebook':'#DA5B0B','Lua':'#000080','Nix':'#7e7eff','MDX':'#fcb32c' };
-  var counts = {};
-  libraryData.forEach(function(r) {
-    var l = r.lang || 'No language';
-    counts[l] = (counts[l] || 0) + 1;
-  });
-  return Object.keys(counts).map(function(l) {
-    return { name: l, count: counts[l], color: langColors[l] || '#444' };
-  }).sort(function(a, b) { return b.count - a.count; });
-})();
-
 var weeklyData = [
   { label: 'Feb 1-7', count: 15 },
   { label: 'Feb 8-14', count: 22 },
@@ -555,71 +559,6 @@ var weeklyData = [
   { label: 'Mar 8-14', count: 8 },
   { label: 'Mar 15-19', count: 3 },
 ];
-
-// Compute top repos dynamically from libraryData (top 15 by stars)
-var topRepos = libraryData.slice(0, 15).map(function(r, i) {
-  return { rank: i + 1, name: r.name, stars: r.stars, lang: r.lang, lc: r.lc, desc: r.desc };
-});
-
-var CAT_LABELS = {
-  tool: 'Dev Tools', app: 'Application', agent: 'Agent / AI',
-  guide: 'Guide / Book', game: 'Game', bench: 'Benchmark',
-  sdk: 'SDK / Framework', infra: 'Infrastructure', other: 'Other'
-};
-
-function categorize(r) {
-  if (r.cat) return r.cat;
-  var d = (r.name + ' ' + r.desc).toLowerCase();
-  if (/game|shooter|rpg|defense|raft|doodie|zork|card game|nimmt/.test(d)) return 'game';
-  if (/book|guide|tutorial|course|written with|advocacy/.test(d)) return 'guide';
-  if (/bench|eval|comparison|benchmark|bluffbench|leaderboard|evals/.test(d)) return 'bench';
-  if (/agent|multi-agent|swarm|orchestrat|council|sentinel|firewall|swarmshield|panopticon/.test(d)) return 'agent';
-  if (/sdk|framework|library|langchain|litellm|ruby_llm|gateway|genkit|camel|owl|koog|floneum/.test(d)) return 'sdk';
-  if (/deploy|docker|aws-cdk|action\.yml|ci\/cd|pr review|pull-merge|infra|bedrock/.test(d)) return 'infra';
-  if (/proxy|cli|terminal|editor|ide|extension|plugin|tool|mcp|hook|skill|prompt|switch|config|setting|dotfile|code-power/.test(d)) return 'tool';
-  if (/system.prompt|cookbook|recipe|documentation|docs|eol|endoflife/.test(d)) return 'guide';
-  if (/chatbot|dashboard|app|tracker|finance|medical|legal|research|scanner|trade|hiring|resume|funding|weather|audio|radio|video|photo|image|teleprompter|parking|portfolio|band|blog/.test(d)) return 'app';
-  return 'other';
-}
-
-// Pre-compute categories
-libraryData.forEach(function(r) { r._cat = categorize(r); });
-
-// Compute star distribution dynamically
-var starDistrib = (function() {
-  var b = { s10k: 0, s1k: 0, s100: 0, s10: 0, s1: 0, s0: 0 };
-  var n = { s10k: 0, s1k: 0, s100: 0, s10: 0, s1: 0, s0: 0 };
-  libraryData.forEach(function(r) {
-    if (r.stars >= 10000) { b.s10k += r.stars; n.s10k++; }
-    else if (r.stars >= 1000) { b.s1k += r.stars; n.s1k++; }
-    else if (r.stars >= 100) { b.s100 += r.stars; n.s100++; }
-    else if (r.stars >= 10) { b.s10 += r.stars; n.s10++; }
-    else if (r.stars >= 1) { b.s1 += r.stars; n.s1++; }
-    else { b.s0++; n.s0++; }
-  });
-  var out = [];
-  if (n.s10k) out.push({ label: '10K+ \u2605 (' + n.s10k + ' repos)', value: b.s10k, color: '#00e5ff' });
-  if (n.s1k) out.push({ label: '1K-10K \u2605 (' + n.s1k + ' repos)', value: b.s1k, color: '#ff6b35' });
-  if (n.s100) out.push({ label: '100-999 \u2605 (' + n.s100 + ' repos)', value: b.s100, color: '#b388ff' });
-  if (n.s10) out.push({ label: '10-99 \u2605 (' + n.s10 + ' repos)', value: b.s10, color: '#69f0ae' });
-  if (n.s1) out.push({ label: '1-9 \u2605 (' + n.s1 + ' repos)', value: b.s1, color: '#ffd740' });
-  if (n.s0) out.push({ label: '0 \u2605 (' + n.s0 + ' repos)', value: Math.max(n.s0, 1), color: '#2a2a30' });
-  return out;
-})();
-
-// Compute category distribution dynamically
-var categoryData = (function() {
-  var catColors = { tool:'#00e5ff', app:'#ff6b35', agent:'#b388ff', guide:'#ff5277',
-    game:'#69f0ae', bench:'#ffd740', sdk:'#00d4ee', infra:'#00a1bb', other:'#8a8a8e' };
-  var counts = {};
-  libraryData.forEach(function(r) {
-    var c = categorize(r);
-    counts[c] = (counts[c] || 0) + 1;
-  });
-  return Object.keys(counts).map(function(c) {
-    return { label: CAT_LABELS[c] || c, value: counts[c], color: catColors[c] || '#666' };
-  }).sort(function(a, b) { return b.value - a.value; });
-})();
 
 var devTypeData = [
   { label: 'Active devs (>5 repos, pre-2025 acct)', value: 48, color: '#00e5ff' },
@@ -719,14 +658,22 @@ function svgEl(tag, attrs) {
 
 // ── RENDERERS ──
 
+function formatCompact(n) {
+  if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+  return n.toLocaleString();
+}
+
 function animateCounters() {
   document.querySelectorAll('[data-count]').forEach(function(elem) {
     var target = parseInt(elem.getAttribute('data-count'));
+    var compact = elem.hasAttribute('data-format') && elem.getAttribute('data-format') === 'compact';
     var dur = 1500, start = performance.now();
     function tick(now) {
       var p = Math.min((now - start) / dur, 1);
       var eased = 1 - Math.pow(1 - p, 3);
-      elem.textContent = Math.round(target * eased).toLocaleString();
+      var val = Math.round(target * eased);
+      elem.textContent = compact ? formatCompact(val) : val.toLocaleString();
       if (p < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
@@ -1107,10 +1054,109 @@ var libraryData = [
   { name: 'jinchiwei/aria_causal-inference', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'Causal inference pipeline with forest plots — 8yr account, 12 repos.' },
   { name: 'njlevy/anytype-export', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'Anytype pages \u2192 static HTML with RTL + Firebase — 9yr account, 9 repos.' },
   { name: 'davekiss/homedaysband.com', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'commit', desc: 'Band website, Next.js 15\u219216 upgrade — 14.3yr account, co-authored with Opus.' },
+  // === CLAUDE CODE (Anthropic's flagship CLI — powered by Opus 4.6) ===
+  { name: 'anthropics/claude-code', stars: 80059, lang: 'Shell', lc: '#89e051', signal: 'under', desc: 'Anthropic\'s agentic coding CLI — lives in your terminal, understands your codebase' },
+  // === HACKATHON WAVE: "Built with Opus 4.6" (Cerebral Valley × Anthropic, Feb 2026) + regional hackathons ===
+  { name: 'ammonhaggerty/anaspace', stars: 45, lang: 'Swift', lc: '#F05138', signal: 'hackathon', desc: 'Claude Code hackathon submission — spatial computing experience' },
+  { name: 'jorgoose/marketmon', stars: 17, lang: 'Svelte', lc: '#ff3e00', signal: 'hackathon', desc: 'Winner of "Build With Claude" — Pokémon-style S&P 500 trading card game' },
+  { name: 'TuanaCelik/anthropic-hackathon', stars: 12, lang: 'Jupyter Notebook', lc: '#DA5B0B', signal: 'hackathon', desc: 'Workshop notebook and assets for the Anthropic Hackathon' },
+  { name: 'sktelecom/SK-AI-SUMMIT-2025-Claude-Code-Builder-Hackathon', stars: 8, lang: 'Python', lc: '#3572A5', signal: 'hackathon', desc: 'Claude Code Hackathon Korea 2025 @ SK AI Summit' },
+  { name: 'arabicapp/everything-claude-code', stars: 7, lang: 'JavaScript', lc: '#f1e05a', signal: 'hackathon', desc: 'Anthropic hackathon winner — Claude Code configs, agents, skills' },
+
+  { name: '51AutoPilot/openclaw-claude-proxy', stars: 5, lang: 'Shell', lc: '#89e051', signal: 'explicit', desc: 'Opus 4.6 Telegram AI assistant via Claude Max + OpenClaw' },
+  { name: 'mchahed99/heimdall', stars: 4, lang: 'TypeScript', lc: '#3178c6', signal: 'hackathon', desc: 'Monitor and audit AI agents — security, compliance. Claude Code Hackathon 2026' },
+  { name: 'furnivall/anthropic-fsd', stars: 3, lang: 'Python', lc: '#3572A5', signal: 'hackathon', desc: 'WIP Anthropic hackathon submission' },
+  { name: 'syleeVeluga/Chat2Entity-MCP', stars: 3, lang: 'TypeScript', lc: '#3178c6', signal: 'hackathon', desc: 'SKT Claude Code Hackathon — chat-to-entity MCP server' },
+  { name: 'Hamjoon/garibong-mcp-project', stars: 3, lang: 'Python', lc: '#3572A5', signal: 'hackathon', desc: 'MCP project for 2025 SKT Claude Code Hackathon' },
 ];
 
 // Sort by stars descending
 libraryData.sort(function(a, b) { return b.stars - a.stars; });
+
+// ── COMPUTED DATA (derived from libraryData) ──
+
+// Language distribution
+var langData = (function() {
+  var langColors = { 'Python':'#3572A5','JavaScript':'#f1e05a','HTML':'#e34c26','TypeScript':'#3178c6',
+    'Rust':'#dea584','Shell':'#89e051','Go':'#00ADD8','Swift':'#F05138','Kotlin':'#A97BFF',
+    'C++':'#f34b7d','Zig':'#ec915c','CSS':'#563d7c','Dart':'#00B4AB','Java':'#b07219',
+    'Ruby':'#701516','Svelte':'#ff3e00','Solidity':'#AA6746','Elixir':'#6e4a7e','Crystal':'#000100',
+    'R':'#198CE7','C#':'#178600','PHP':'#4F5D95','Astro':'#ff5a03','Emacs Lisp':'#c065db',
+    'Jupyter Notebook':'#DA5B0B','Lua':'#000080','Nix':'#7e7eff','MDX':'#fcb32c' };
+  var counts = {};
+  libraryData.forEach(function(r) {
+    var l = r.lang || 'No language';
+    counts[l] = (counts[l] || 0) + 1;
+  });
+  return Object.keys(counts).map(function(l) {
+    return { name: l, count: counts[l], color: langColors[l] || '#444' };
+  }).sort(function(a, b) { return b.count - a.count; });
+})();
+
+// Top 15 repos by stars
+var topRepos = libraryData.slice(0, 15).map(function(r, i) {
+  return { rank: i + 1, name: r.name, stars: r.stars, lang: r.lang, lc: r.lc, desc: r.desc };
+});
+
+// Category helpers + pre-compute
+var CAT_LABELS = {
+  tool: 'Dev Tools', app: 'Application', agent: 'Agent / AI',
+  guide: 'Guide / Book', game: 'Game', bench: 'Benchmark',
+  sdk: 'SDK / Framework', infra: 'Infrastructure', other: 'Other'
+};
+
+function categorize(r) {
+  if (r.cat) return r.cat;
+  var d = (r.name + ' ' + r.desc).toLowerCase();
+  if (/game|shooter|rpg|defense|raft|doodie|zork|card game|nimmt/.test(d)) return 'game';
+  if (/book|guide|tutorial|course|written with|advocacy/.test(d)) return 'guide';
+  if (/bench|eval|comparison|benchmark|bluffbench|leaderboard|evals/.test(d)) return 'bench';
+  if (/agent|multi-agent|swarm|orchestrat|council|sentinel|firewall|swarmshield|panopticon/.test(d)) return 'agent';
+  if (/sdk|framework|library|langchain|litellm|ruby_llm|gateway|genkit|camel|owl|koog|floneum/.test(d)) return 'sdk';
+  if (/deploy|docker|aws-cdk|action\.yml|ci\/cd|pr review|pull-merge|infra|bedrock/.test(d)) return 'infra';
+  if (/proxy|cli|terminal|editor|ide|extension|plugin|tool|mcp|hook|skill|prompt|switch|config|setting|dotfile|code-power/.test(d)) return 'tool';
+  if (/system.prompt|cookbook|recipe|documentation|docs|eol|endoflife/.test(d)) return 'guide';
+  if (/chatbot|dashboard|app|tracker|finance|medical|legal|research|scanner|trade|hiring|resume|funding|weather|audio|radio|video|photo|image|teleprompter|parking|portfolio|band|blog/.test(d)) return 'app';
+  return 'other';
+}
+
+libraryData.forEach(function(r) { r._cat = categorize(r); });
+
+// Star distribution
+var starDistrib = (function() {
+  var b = { s10k: 0, s1k: 0, s100: 0, s10: 0, s1: 0, s0: 0 };
+  var n = { s10k: 0, s1k: 0, s100: 0, s10: 0, s1: 0, s0: 0 };
+  libraryData.forEach(function(r) {
+    if (r.stars >= 10000) { b.s10k += r.stars; n.s10k++; }
+    else if (r.stars >= 1000) { b.s1k += r.stars; n.s1k++; }
+    else if (r.stars >= 100) { b.s100 += r.stars; n.s100++; }
+    else if (r.stars >= 10) { b.s10 += r.stars; n.s10++; }
+    else if (r.stars >= 1) { b.s1 += r.stars; n.s1++; }
+    else { b.s0++; n.s0++; }
+  });
+  var out = [];
+  if (n.s10k) out.push({ label: '10K+ \u2605 (' + n.s10k + ' repos)', value: b.s10k, color: '#00e5ff' });
+  if (n.s1k) out.push({ label: '1K-10K \u2605 (' + n.s1k + ' repos)', value: b.s1k, color: '#ff6b35' });
+  if (n.s100) out.push({ label: '100-999 \u2605 (' + n.s100 + ' repos)', value: b.s100, color: '#b388ff' });
+  if (n.s10) out.push({ label: '10-99 \u2605 (' + n.s10 + ' repos)', value: b.s10, color: '#69f0ae' });
+  if (n.s1) out.push({ label: '1-9 \u2605 (' + n.s1 + ' repos)', value: b.s1, color: '#ffd740' });
+  if (n.s0) out.push({ label: '0 \u2605 (' + n.s0 + ' repos)', value: Math.max(n.s0, 1), color: '#2a2a30' });
+  return out;
+})();
+
+// Category distribution
+var categoryData = (function() {
+  var catColors = { tool:'#00e5ff', app:'#ff6b35', agent:'#b388ff', guide:'#ff5277',
+    game:'#69f0ae', bench:'#ffd740', sdk:'#00d4ee', infra:'#00a1bb', other:'#8a8a8e' };
+  var counts = {};
+  libraryData.forEach(function(r) {
+    var c = categorize(r);
+    counts[c] = (counts[c] || 0) + 1;
+  });
+  return Object.keys(counts).map(function(c) {
+    return { label: CAT_LABELS[c] || c, value: counts[c], color: catColors[c] || '#666' };
+  }).sort(function(a, b) { return b.value - a.value; });
+})();
 
 var SIGNAL_LABELS = {
   explicit: 'Explicit',
@@ -1164,6 +1210,28 @@ function renderJpheinGrid() {
     card.appendChild(icon);
     card.appendChild(info);
     g.appendChild(card);
+  });
+}
+
+function renderHackathonWinners() {
+  var c = document.getElementById('hackathon-winners');
+  if (!c) return;
+  var winners = [
+    { place: '1st', name: 'CrossBeam', author: 'Mike Brown', desc: 'Speeds up California\'s permitting process \u2014 tools for code compliance and plan review', color: 'var(--accent-gold)' },
+    { place: '2nd', name: 'Elisa', author: 'Jon McBee', desc: 'Visual programming for kids \u2014 snap blocks together, Claude agents build real code', color: '#c0c0c0' },
+    { place: '3rd', name: 'postvisit.ai', author: 'Michal Nedoszytko', desc: 'Turns visit transcripts + medical records into personalized health guidance (built by a cardiologist)', color: '#cd7f32' },
+    { place: 'Creative', name: 'Conductr', author: 'Asep Bagja Priandana', desc: 'Play chords on a MIDI controller, Claude directs a four-track generative band (~15ms latency)', color: 'var(--accent-cyan)' },
+    { place: 'Special', name: 'TARA', author: 'Kyeyune Kazibwe', desc: 'Dashcam-to-economic-appraisal pipeline \u2014 turning road footage in Uganda into infrastructure investment recommendations', color: 'var(--accent-violet)' }
+  ];
+  var title = el('div', { style: { fontSize: '9px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent-gold)', marginBottom: '16px', marginTop: '24px' }, textContent: 'Winners' });
+  c.appendChild(title);
+  winners.forEach(function(w) {
+    var badge = el('span', { style: { display: 'inline-block', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: w.color, border: '1px solid ' + w.color, padding: '2px 8px', marginRight: '10px', fontFamily: 'var(--font-mono)' }, textContent: w.place });
+    var name = el('span', { style: { fontFamily: 'var(--font-serif)', fontSize: '16px', color: 'var(--text-main)' }, textContent: w.name });
+    var by = el('span', { style: { fontSize: '11px', color: 'var(--text-dim)', marginLeft: '8px' }, textContent: 'by ' + w.author });
+    var desc = el('div', { style: { fontSize: '11px', color: 'var(--text-dim)', lineHeight: '1.6', marginTop: '4px', paddingLeft: '0' }, textContent: w.desc });
+    var row = el('div', { style: { padding: '12px 0', borderBottom: '1px solid var(--border)' } }, [el('div', {}, [badge, name, by]), desc]);
+    c.appendChild(row);
   });
 }
 
@@ -1448,6 +1516,7 @@ document.addEventListener('DOMContentLoaded', function() {
   renderDevCards('newdev-grid', newDevs, false);
   renderCopilotContext();
   renderJpheinGrid();
+  renderHackathonWinners();
   renderSignals();
   renderLibrary();
   document.querySelectorAll('.reveal').forEach(function(e) { observer.observe(e); });
