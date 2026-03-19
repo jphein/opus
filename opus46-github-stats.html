@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opus 4.6 on GitHub — A Comprehensive Census</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap');
+
+  :root {
+    --bg: #0a0a0c;
+    --surface: #111114;
+    --surface-2: #18181c;
+    --border: #2a2a30;
+    --text: #e8e6e3;
+    --text-dim: #8a8a8e;
+    --accent-cyan: #00e5ff;
+    --accent-orange: #ff6b35;
+    --accent-violet: #b388ff;
+    --accent-green: #69f0ae;
+    --accent-rose: #ff5277;
+    --accent-gold: #ffd740;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-serif: 'Instrument Serif', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-mono); font-size: 13px;
+    line-height: 1.6; overflow-x: hidden;
+  }
+
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+  /* HEADER */
+  header { padding: 80px 0 48px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; top: -200px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%); pointer-events: none; }
+  .eyebrow { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 16px; font-weight: 500; opacity: 0; animation: fadeUp 0.6s ease forwards 0.2s; }
+  h1 { font-family: var(--font-serif); font-size: clamp(48px, 7vw, 86px); font-weight: 400; line-height: 1.0; letter-spacing: -2px; margin-bottom: 24px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.4s; }
+  h1 em { color: var(--accent-cyan); font-style: italic; }
+  .subtitle { font-size: 14px; color: var(--text-dim); max-width: 620px; line-height: 1.8; opacity: 0; animation: fadeUp 0.8s ease forwards 0.6s; }
+  .subtitle strong { color: var(--accent-orange); font-weight: 500; }
+
+  /* STAT STRIP */
+  .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 48px 0; }
+  .stat-card { background: var(--surface); padding: 28px 20px; text-align: center; opacity: 0; animation: fadeUp 0.6s ease forwards; }
+  .stat-card:nth-child(1) { animation-delay: 0.8s; }
+  .stat-card:nth-child(2) { animation-delay: 0.9s; }
+  .stat-card:nth-child(3) { animation-delay: 1.0s; }
+  .stat-card:nth-child(4) { animation-delay: 1.1s; }
+  .stat-card:nth-child(5) { animation-delay: 1.2s; }
+  .stat-card:nth-child(6) { animation-delay: 1.3s; }
+  .stat-number { font-size: 36px; font-weight: 800; line-height: 1; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+  .stat-number.cyan { color: var(--accent-cyan); }
+  .stat-number.orange { color: var(--accent-orange); }
+  .stat-number.violet { color: var(--accent-violet); }
+  .stat-number.green { color: var(--accent-green); }
+  .stat-number.gold { color: var(--accent-gold); }
+  .stat-number.rose { color: var(--accent-rose); }
+  .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+
+  /* SECTIONS */
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  .section-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 32px; }
+  .section-num { font-size: 11px; color: var(--accent-cyan); font-weight: 700; letter-spacing: 1px; }
+  h2 { font-family: var(--font-serif); font-size: 32px; font-weight: 400; letter-spacing: -0.5px; }
+  .section-note { font-size: 11px; color: var(--text-dim); line-height: 1.7; max-width: 700px; margin-bottom: 24px; }
+
+  /* CHARTS */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .chart-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  @media (max-width: 900px) { .chart-grid-3 { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) { .chart-grid { grid-template-columns: 1fr; } }
+
+  .chart-box { background: var(--surface); border: 1px solid var(--border); padding: 28px; position: relative; overflow: hidden; }
+  .chart-box.cyan::before, .chart-box.orange::before, .chart-box.violet::before, .chart-box.green::before, .chart-box.rose::before, .chart-box.gold::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .chart-box.cyan::before { background: var(--accent-cyan); }
+  .chart-box.orange::before { background: var(--accent-orange); }
+  .chart-box.violet::before { background: var(--accent-violet); }
+  .chart-box.green::before { background: var(--accent-green); }
+  .chart-box.rose::before { background: var(--accent-rose); }
+  .chart-box.gold::before { background: var(--accent-gold); }
+  .chart-box.wide { grid-column: 1 / -1; }
+  .chart-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 24px; }
+
+  /* BARS */
+  .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: grid; grid-template-columns: 90px 1fr 50px; align-items: center; gap: 12px; }
+  .bar-label { font-size: 11px; text-align: right; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { height: 20px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; width: 0; transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+  .bar-value { font-size: 11px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+  /* TIMELINE */
+  .timeline-chart { display: flex; align-items: flex-end; gap: 6px; height: 180px; padding-top: 20px; }
+  .timeline-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 8px; }
+  .timeline-bar { width: 100%; border-radius: 3px 3px 0 0; transition: height 1s cubic-bezier(0.16, 1, 0.3, 1); position: relative; cursor: pointer; }
+  .timeline-bar:hover { filter: brightness(1.3); }
+  .timeline-tooltip { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); background: var(--surface-2); border: 1px solid var(--border); padding: 3px 8px; font-size: 10px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 10; }
+  .timeline-bar:hover .timeline-tooltip { opacity: 1; }
+  .timeline-label { font-size: 9px; color: var(--text-dim); writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); white-space: nowrap; max-height: 50px; overflow: hidden; }
+
+  /* DONUT */
+  .donut-container { display: flex; align-items: center; gap: 32px; }
+  .donut-svg { width: 160px; height: 160px; flex-shrink: 0; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 10px; font-size: 11px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .legend-label { color: var(--text-dim); }
+  .legend-value { color: var(--text); font-weight: 500; margin-left: auto; padding-left: 12px; }
+
+  /* TABLE */
+  .repo-row { display: grid; grid-template-columns: 32px 1fr 100px 100px; gap: 16px; padding: 14px 16px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
+  .repo-row:hover { background: var(--surface-2); }
+  .repo-rank { font-size: 11px; color: var(--text-dim); text-align: right; font-variant-numeric: tabular-nums; }
+  .repo-name-col { font-size: 12px; font-weight: 500; min-width: 0; }
+  .repo-link { color: var(--accent-cyan); text-decoration: none; transition: color 0.2s; }
+  .repo-link:hover { color: #fff; }
+  .repo-desc { font-size: 10px; color: var(--text-dim); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .repo-lang { font-size: 10px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+  .lang-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .repo-stars { font-size: 12px; color: var(--accent-gold); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* FLAGSHIP */
+  .flagship { background: linear-gradient(135deg, rgba(0,229,255,0.04) 0%, rgba(179,136,255,0.04) 100%); border: 1px solid var(--border); padding: 40px; margin-bottom: 32px; position: relative; overflow: hidden; }
+  .flagship::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet)); }
+  .flagship-badge { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-violet); margin-bottom: 12px; }
+  .flagship h3 { font-family: var(--font-serif); font-size: 28px; font-weight: 400; margin-bottom: 8px; }
+  .flagship h3 a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); transition: border-color 0.2s; }
+  .flagship h3 a:hover { border-color: var(--accent-cyan); }
+  .flagship-desc { color: var(--text-dim); font-size: 12px; line-height: 1.8; max-width: 700px; margin-bottom: 20px; }
+  .flagship-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .flagship-stat { display: flex; align-items: baseline; gap: 8px; }
+  .flagship-stat-val { font-size: 20px; font-weight: 700; }
+  .flagship-stat-label { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* NOTABLE CARDS */
+  .notable-card { background: var(--surface); border: 1px solid var(--border); padding: 28px; position: relative; overflow: hidden; }
+  .notable-accent { position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .notable-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .notable-title { font-family: var(--font-serif); font-size: 20px; }
+  .notable-stars { font-size: 11px; color: var(--accent-gold); }
+  .notable-meta { font-size: 10px; color: var(--accent-cyan); margin-bottom: 10px; }
+  .notable-desc { font-size: 11px; color: var(--text-dim); line-height: 1.7; }
+
+  /* DEVELOPER PROFILE CARDS */
+  .dev-card { background: var(--surface); border: 1px solid var(--border); padding: 20px; display: flex; gap: 16px; align-items: center; }
+  .dev-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .dev-info { min-width: 0; }
+  .dev-name { font-size: 12px; font-weight: 500; color: var(--accent-cyan); }
+  .dev-detail { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+  .dev-tag { display: inline-block; font-size: 9px; padding: 2px 8px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin-top: 4px; }
+
+  /* HACKATHON CALLOUT */
+  .hackathon-box { background: linear-gradient(135deg, rgba(255,107,53,0.06) 0%, rgba(255,215,64,0.06) 100%); border: 1px solid var(--border); padding: 40px; position: relative; overflow: hidden; }
+  .hackathon-box::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold)); }
+  .hackathon-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; margin-top: 24px; }
+
+  /* FOOTER */
+  footer { padding: 48px 0; text-align: center; color: var(--text-dim); font-size: 10px; letter-spacing: 1px; }
+  footer a { color: var(--accent-cyan); text-decoration: none; }
+
+  /* LIBRARY */
+  .library-controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; align-items: center; }
+  .library-search { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 12px; padding: 10px 16px; flex: 1; min-width: 200px; outline: none; transition: border-color 0.2s; }
+  .library-search:focus { border-color: var(--accent-cyan); }
+  .library-search::placeholder { color: var(--text-dim); }
+  .filter-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); font-family: var(--font-mono); font-size: 10px; padding: 8px 14px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s; white-space: nowrap; }
+  .filter-btn:hover { border-color: var(--accent-cyan); color: var(--text); }
+  .filter-btn.active { background: rgba(0,229,255,0.1); border-color: var(--accent-cyan); color: var(--accent-cyan); }
+  .library-count { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 16px; }
+  .lib-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .lib-row { display: grid; grid-template-columns: 1fr 90px 70px 80px; gap: 12px; padding: 12px 16px; background: var(--surface); align-items: center; transition: background 0.15s; }
+  .lib-row:hover { background: var(--surface-2); }
+  .lib-row.header { background: var(--bg); position: sticky; top: 0; z-index: 5; }
+  .lib-name { min-width: 0; }
+  .lib-name a { color: var(--accent-cyan); text-decoration: none; font-size: 11px; font-weight: 500; }
+  .lib-name a:hover { color: #fff; }
+  .lib-desc { font-size: 9px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 1px; }
+  .lib-lang { font-size: 10px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; }
+  .lib-stars { font-size: 11px; color: var(--accent-gold); text-align: right; font-variant-numeric: tabular-nums; }
+  .lib-signal { font-size: 9px; text-align: right; }
+  .signal-tag { display: inline-block; padding: 2px 6px; border-radius: 2px; font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; }
+  .signal-explicit { background: rgba(0,229,255,0.12); color: var(--accent-cyan); }
+  .signal-config { background: rgba(179,136,255,0.12); color: var(--accent-violet); }
+  .signal-commit { background: rgba(105,240,174,0.12); color: var(--accent-green); }
+  .signal-under { background: rgba(255,107,53,0.12); color: var(--accent-orange); }
+  .signal-hackathon { background: rgba(255,215,64,0.12); color: var(--accent-gold); }
+  .lib-hidden { display: none; }
+
+  /* DETECTION METHODOLOGY */
+  .signals-overview { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); margin-bottom: 32px; }
+  @media (max-width: 900px) { .signals-overview { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px) { .signals-overview { grid-template-columns: repeat(2, 1fr); } }
+  .sig-overview-card { background: var(--surface); padding: 20px 16px; text-align: center; position: relative; overflow: hidden; }
+  .sig-overview-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .sig-overview-icon { font-size: 24px; margin-bottom: 8px; opacity: 0.9; }
+  .sig-overview-count { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+  .sig-overview-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+  .signal-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 768px) { .signal-cards { grid-template-columns: 1fr; } }
+  .signal-method-card { background: var(--surface); border: 1px solid var(--border); padding: 28px; position: relative; overflow: hidden; }
+  .signal-method-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .signal-method-card.wide { grid-column: 1 / -1; }
+  .smc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .smc-icon { font-size: 20px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+  .smc-title { font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+  .smc-subtitle { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
+  .smc-body { font-size: 11px; color: var(--text-dim); line-height: 1.8; margin-bottom: 16px; }
+  .smc-query { background: var(--bg); border: 1px solid var(--border); border-radius: 3px; padding: 10px 14px; font-family: var(--font-mono); font-size: 10px; color: var(--accent-cyan); overflow-x: auto; white-space: pre; margin-bottom: 12px; position: relative; }
+  .smc-query::before { content: 'SEARCH PATTERN'; position: absolute; top: -8px; left: 10px; background: var(--surface); padding: 0 6px; font-size: 7px; letter-spacing: 2px; color: var(--text-dim); }
+  .smc-example { font-size: 10px; color: var(--text-dim); }
+  .smc-example a { color: var(--accent-cyan); text-decoration: none; }
+  .smc-example a:hover { color: #fff; }
+  .smc-meter { height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+  .smc-meter-fill { height: 100%; border-radius: 2px; width: 0; transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="eyebrow">Comprehensive Data Report / March 19, 2026</div>
+    <h1>Claude <em>Opus 4.6</em><br>on GitHub</h1>
+    <p class="subtitle">
+      Since its release on <strong>February 5, 2026</strong>, Opus 4.6 has powered everything
+      from indie side projects to 40K-star production platforms. We crawled GitHub Search, Topics,
+      commit signatures, config files, and developer profiles to build a comprehensive census —
+      including hidden integrations and developers who never pushed code before.
+    </p>
+  </header>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-card">
+      <div class="stat-number cyan" data-count="144">0</div>
+      <div class="stat-label">Public Repos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number orange" data-count="203480">0</div>
+      <div class="stat-label">Total Stars</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number violet" data-count="19">0</div>
+      <div class="stat-label">Languages</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number green" data-count="123">0</div>
+      <div class="stat-label">Developers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number gold" data-count="500">0</div>
+      <div class="stat-label">Hackathon Builders</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number rose" data-count="29">0</div>
+      <div class="stat-label">% New/Dormant Devs</div>
+    </div>
+  </div>
+
+  <!-- 01 FLAGSHIP -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>The Flagship</h2>
+    </div>
+    <div class="flagship reveal">
+      <div class="flagship-badge">Anthropic Official · 100% AI-Authored</div>
+      <h3><a href="https://github.com/anthropics/claudes-c-compiler" target="_blank">anthropics/claudes-c-compiler</a></h3>
+      <p class="flagship-desc">
+        A dependency-free C compiler written entirely in Rust by Claude Opus 4.6.
+        Targets x86-64, i686, AArch64, and RISC-V. Successfully compiles PostgreSQL,
+        Redis, CPython, FFmpeg, DOOM, QEMU, and 150+ other projects. Features an
+        SSA-based IR with 15 optimization passes, a custom assembler and linker,
+        and DWARF debug info generation.
+      </p>
+      <div class="flagship-stats">
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-gold)">2,547</span>
+          <span class="flagship-stat-label">Stars</span>
+        </div>
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-cyan)">196</span>
+          <span class="flagship-stat-label">Forks</span>
+        </div>
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-violet)">3,982</span>
+          <span class="flagship-stat-label">Commits</span>
+        </div>
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-green)">96.2%</span>
+          <span class="flagship-stat-label">Rust</span>
+        </div>
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-orange)">150+</span>
+          <span class="flagship-stat-label">Projects Compiled</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 THE NUMBERS -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>The Numbers</h2>
+    </div>
+    <p class="section-note">Data from GitHub Search API (repos mentioning "opus 4.6" or "claude-opus-4-6"), GitHub Topics (claude-opus-4-6, opus-4-6, claude-opus), and user profile analysis of 83 unique developers.</p>
+    <div class="chart-grid">
+      <div class="chart-box cyan reveal">
+        <div class="chart-title">Repos created per week (since release)</div>
+        <div class="timeline-chart" id="timeline-chart"></div>
+      </div>
+      <div class="chart-box orange reveal">
+        <div class="chart-title">Language distribution (14 languages)</div>
+        <div class="bar-chart" id="lang-chart"></div>
+      </div>
+      <div class="chart-box violet reveal">
+        <div class="chart-title">Star distribution</div>
+        <div class="donut-container">
+          <svg class="donut-svg" viewBox="0 0 160 160" id="star-donut"></svg>
+          <div class="donut-legend" id="star-legend"></div>
+        </div>
+      </div>
+      <div class="chart-box green reveal">
+        <div class="chart-title">Project categories</div>
+        <div class="donut-container">
+          <svg class="donut-svg" viewBox="0 0 160 160" id="cat-donut"></svg>
+          <div class="donut-legend" id="cat-legend"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 WHO'S BUILDING -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Who's Building</h2>
+    </div>
+    <p class="section-note">We profiled all 83 individual developers who published Opus 4.6 repos. 29% are either brand new to GitHub or old accounts that were effectively dormant before Opus 4.6 dropped.</p>
+
+    <div class="chart-grid" style="margin-bottom:24px;">
+      <div class="chart-box rose reveal">
+        <div class="chart-title">Developer type breakdown</div>
+        <div class="donut-container">
+          <svg class="donut-svg" viewBox="0 0 160 160" id="dev-donut"></svg>
+          <div class="donut-legend" id="dev-legend"></div>
+        </div>
+      </div>
+      <div class="chart-box gold reveal">
+        <div class="chart-title">Account age distribution</div>
+        <div class="bar-chart" id="age-chart"></div>
+      </div>
+    </div>
+
+    <div class="chart-title" style="margin-bottom:16px;">Dormant accounts awakened — old GitHub accounts, barely used until Opus 4.6</div>
+    <div class="chart-grid" id="dormant-grid"></div>
+
+    <div class="chart-title" style="margin-top:32px;margin-bottom:16px;">Brand new accounts — created in 2026, building with AI from day one</div>
+    <div class="chart-grid" id="newdev-grid"></div>
+  </section>
+
+  <!-- 04 HACKATHON -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>The Hackathon</h2>
+    </div>
+    <div class="hackathon-box reveal">
+      <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-orange);margin-bottom:12px;">Cerebral Valley x Anthropic · Feb 10-16, 2026</div>
+      <div style="font-family:var(--font-serif);font-size:28px;margin-bottom:12px;">"Built with Opus 4.6" Hackathon</div>
+      <div style="font-size:12px;color:var(--text-dim);line-height:1.8;max-width:700px;">
+        500 selected participants. $500 in API credits each. Max team size of two. Everything open source, built from scratch. All powered by Claude Opus 4.6 with extended thinking and 1M context.
+      </div>
+      <div class="hackathon-stats">
+        <div>
+          <div class="stat-number orange" style="font-size:24px;">500</div>
+          <div class="stat-label">Participants</div>
+        </div>
+        <div>
+          <div class="stat-number gold" style="font-size:24px;">$100K</div>
+          <div class="stat-label">In API Credits</div>
+        </div>
+        <div>
+          <div class="stat-number green" style="font-size:24px;">$50K</div>
+          <div class="stat-label">First Place</div>
+        </div>
+        <div>
+          <div class="stat-number cyan" style="font-size:24px;">7 days</div>
+          <div class="stat-label">Duration</div>
+        </div>
+        <div>
+          <div class="stat-number violet" style="font-size:24px;">2 max</div>
+          <div class="stat-label">Team Size</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 TOP REPOS -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Top Repositories</h2>
+    </div>
+    <p class="section-note">The 15 highest-starred public repos explicitly referencing Claude Opus 4.6 (excluding gpt4free which only mentions it as a supported model).</p>
+    <div class="chart-box cyan reveal" style="padding:0;" id="repo-section"></div>
+  </section>
+
+  <!-- 06 NOTABLE PROJECTS -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Notable Projects</h2>
+    </div>
+    <p class="section-note">Standout projects across different domains — from smartwatches to raft survival games to legal AI.</p>
+    <div class="chart-grid" id="notable-grid"></div>
+  </section>
+
+  <!-- 07 COPILOT CONTEXT -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>The Bigger Picture</h2>
+    </div>
+    <p class="section-note">Opus 4.6 is available to all GitHub Copilot tiers. These 120 repos are the visible tip — the model is silently powering millions of Copilot sessions.</p>
+    <div class="chart-grid-3" id="context-grid"></div>
+  </section>
+
+  <!-- 08 CASE STUDY -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Case Study: @jphein</h2>
+    </div>
+    <p class="section-note">A 10-year-old GitHub account that exploded with activity in March 2026. This is what "re-energized by AI" looks like — detectable via CLAUDE.md files, Co-Authored-By commit signatures, and creation date clustering.</p>
+
+    <div class="flagship reveal">
+      <div class="flagship-badge">Re-Energized Veteran · 10yr Account · 7 Opus 4.6 Repos</div>
+      <h3><a href="https://github.com/jphein" target="_blank">Jeffrey Hein (@jphein)</a></h3>
+      <p class="flagship-desc">
+        Account since May 2016. "Just plain helpful." Previously built Linux thin-client configs, DDNS tools,
+        and Discord bots. Then in February-March 2026: 12 new repositories in 6 weeks, almost all co-authored
+        with Claude Opus 4.6. Building GNOME Shell extensions, MCP servers, voice interfaces, and Claude Code tooling.
+        6 repos contain CLAUDE.md files. 7 have explicit Opus 4.6 co-author commit signatures.
+      </p>
+      <div class="flagship-stats">
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-cyan)">40</span>
+          <span class="flagship-stat-label">Total Repos</span>
+        </div>
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-orange)">12</span>
+          <span class="flagship-stat-label">New in 2026</span>
+        </div>
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-violet)">7</span>
+          <span class="flagship-stat-label">Opus 4.6 Co-Authored</span>
+        </div>
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-green)">6</span>
+          <span class="flagship-stat-label">Have CLAUDE.md</span>
+        </div>
+        <div class="flagship-stat">
+          <span class="flagship-stat-val" style="color:var(--accent-gold)">10yr</span>
+          <span class="flagship-stat-label">Account Age</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-title" style="margin-bottom:16px;">Detection signals found across @jphein repos</div>
+    <div class="chart-grid" id="jphein-grid"></div>
+  </section>
+
+  <!-- 09 DETECTION METHODOLOGY -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>How We Found Them</h2>
+    </div>
+    <p class="section-note">Not every Opus 4.6 project announces itself. We used 5 distinct detection signals — from obvious README mentions to buried config files and commit forensics — to build this census. Here's the playbook for finding hidden AI-assisted code.</p>
+    <div class="signals-overview" id="signals-overview"></div>
+    <div class="signal-cards" id="signal-cards"></div>
+  </section>
+
+  <!-- 10 FULL LIBRARY -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <h2>The Full Library</h2>
+    </div>
+    <p class="section-note">Every public repo we found referencing Claude Opus 4.6 — from explicit topic tags to hidden config files and co-author commit signatures. Searchable and filterable.</p>
+    <div class="library-controls" id="lib-controls"></div>
+    <div class="library-count" id="lib-count"></div>
+    <div class="lib-grid" id="lib-grid"></div>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    Data sourced from GitHub Search API, GitHub Topics, and user profile analysis · March 19, 2026<br>
+    Generated by <a href="https://claude.com/claude-code" target="_blank">Claude Code</a> (Opus 4.6)
+  </div>
+</footer>
+
+<script>
+// ── ALL DATA ──
+
+var langData = [
+  { name: 'Python', count: 18, color: '#3572A5' },
+  { name: 'JavaScript', count: 16, color: '#f1e05a' },
+  { name: 'HTML', count: 12, color: '#e34c26' },
+  { name: 'TypeScript', count: 12, color: '#3178c6' },
+  { name: 'Rust', count: 5, color: '#dea584' },
+  { name: 'Shell', count: 4, color: '#89e051' },
+  { name: 'Go', count: 3, color: '#00ADD8' },
+  { name: 'Swift', count: 2, color: '#F05138' },
+  { name: 'Kotlin', count: 1, color: '#A97BFF' },
+  { name: 'C++', count: 1, color: '#f34b7d' },
+  { name: 'Zig', count: 1, color: '#ec915c' },
+  { name: 'CSS', count: 1, color: '#563d7c' },
+  { name: 'Dart', count: 1, color: '#00B4AB' },
+  { name: 'No language', count: 23, color: '#444' },
+];
+
+var weeklyData = [
+  { label: 'Feb 1-7', count: 15 },
+  { label: 'Feb 8-14', count: 22 },
+  { label: 'Feb 15-21', count: 18 },
+  { label: 'Feb 22-28', count: 13 },
+  { label: 'Mar 1-7', count: 13 },
+  { label: 'Mar 8-14', count: 8 },
+  { label: 'Mar 15-19', count: 3 },
+];
+
+var topRepos = [
+  { rank: 1,  name: 'anthropics/claudes-c-compiler',           stars: 2547, lang: 'Rust',       lc: '#dea584', desc: 'Dependency-free C compiler in Rust \u2014 compiles Linux kernel' },
+  { rank: 2,  name: 'yaroslavyaroslav/OpenAI-sublime-text',    stars: 434,  lang: 'Python',     lc: '#3572A5', desc: 'Sublime Text AI assistant (gpt-5, Opus 4.6, Gemini 3, ollama)' },
+  { rank: 3,  name: 'Eric86777/vps-tcp-tune',                  stars: 245,  lang: 'Shell',      lc: '#89e051', desc: 'BBR3+FQ TCP network tuning script (docs by Opus 4.6)' },
+  { rank: 4,  name: '0xtresser/OpenClaw-Book',                 stars: 195,  lang: '',           lc: '#666',    desc: 'First book about OpenClaw, written with OpenCode + Opus 4.6' },
+  { rank: 5,  name: 'ucsandman/OpenClaw-Hierarchical-Memory',  stars: 110,  lang: '',           lc: '#666',    desc: 'Hierarchical memory system for OpenClaw agents on Opus 4.6' },
+  { rank: 6,  name: 'anyofai/poe',                             stars: 55,   lang: '',           lc: '#666',    desc: 'Poe subscription guide (GPT-5.2, Opus 4.6, Gemini 3.1)' },
+  { rank: 7,  name: '0xtresser/OpenCode-Book',                 stars: 42,   lang: '',           lc: '#666',    desc: 'Book about OpenCode, written with OpenCode + Opus 4.6' },
+  { rank: 8,  name: 'pjq/sap-ai-core-llm-proxy',              stars: 29,   lang: 'Python',     lc: '#3572A5', desc: 'SAP AI Core LLM proxy (GPT-5, Opus 4.6, Gemini)' },
+  { rank: 9,  name: 'johnpsasser/claude-code-prompt-optimizer', stars: 28,  lang: 'JavaScript', lc: '#f1e05a', desc: 'AI prompt optimization hook for Claude Code' },
+  { rank: 10, name: 'ThinkOffApp/ClawWatch',                   stars: 23,   lang: 'Kotlin',     lc: '#A97BFF', desc: 'First AI agent natively on a Galaxy Watch' },
+  { rank: 11, name: 'SovranAMR/claude-code-via-antigravity',   stars: 23,   lang: 'JavaScript', lc: '#f1e05a', desc: 'Free Claude Code via Google Antigravity' },
+  { rank: 12, name: 'BoostLabsAU/LLM-Orchestrator-coder-setup', stars: 18, lang: '',           lc: '#666',    desc: 'Orchestrator \u2194 Coding agent workflow with Opus 4.6' },
+  { rank: 13, name: 'chandika/openclaw-model-router',           stars: 14,  lang: '',           lc: '#666',    desc: 'Intelligent model routing: Sonnet 4.6 vs Opus 4.6' },
+  { rank: 14, name: 'brb-dreaming/biological-twin',             stars: 12,  lang: 'TypeScript', lc: '#3178c6', desc: 'Digital mirror born from your DNA \u2014 Hackathon entry' },
+  { rank: 15, name: 'flyryan/ai-news-aggregator',               stars: 11,  lang: 'Python',     lc: '#3572A5', desc: 'Multi-agent AI news pipeline with extended thinking' },
+];
+
+var starDistrib = [
+  { label: '2,547 \u2605 (c-compiler)', value: 2547, color: '#00e5ff' },
+  { label: '100+ \u2605 (3 repos)',     value: 589,  color: '#b388ff' },
+  { label: '10-99 \u2605 (11 repos)',   value: 319,  color: '#69f0ae' },
+  { label: '1-9 \u2605 (36 repos)',     value: 119,  color: '#ffd740' },
+  { label: '0 \u2605 (48 repos)',       value: 1,    color: '#2a2a30' },
+];
+
+var categoryData = [
+  { label: 'Developer Tools',     value: 22, color: '#00e5ff' },
+  { label: 'Applications',        value: 18, color: '#ff6b35' },
+  { label: 'Agents / Multi-agent', value: 12, color: '#b388ff' },
+  { label: 'Guides / Books',      value: 14, color: '#ff5277' },
+  { label: 'Games',               value: 8,  color: '#69f0ae' },
+  { label: 'Benchmarks / Evals',  value: 7,  color: '#ffd740' },
+  { label: 'Other / Misc',        value: 19, color: '#8a8a8e' },
+];
+
+var devTypeData = [
+  { label: 'Active devs (>5 repos, pre-2025 acct)', value: 48, color: '#00e5ff' },
+  { label: 'Dormant awakened (\u22645 repos, old acct)',  value: 15, color: '#ff5277' },
+  { label: 'Recent accounts (2025)',                     value: 11, color: '#b388ff' },
+  { label: 'Brand new accounts (2026)',                  value: 9,  color: '#ffd740' },
+];
+
+var accountAgeData = [
+  { name: '10+ years',  count: 12, color: '#00e5ff' },
+  { name: '5-9 years',  count: 14, color: '#00d4ee' },
+  { name: '3-4 years',  count: 16, color: '#00c3dd' },
+  { name: '1-2 years',  count: 22, color: '#00b2cc' },
+  { name: '<1 year',    count: 19, color: '#00a1bb' },
+];
+
+var dormantDevs = [
+  { name: 'dr3d',          created: '2009', age: '17yr', repos: 5,  project: 'SomaFM-for-CardPuter', desc: 'Internet radio for M5Stack' },
+  { name: 'esagduyu',      created: '2013', age: '13yr', repos: 4,  project: 'project-tiro', desc: 'Reading OS for the AI age' },
+  { name: 'davidrz',       created: '2013', age: '13yr', repos: 4,  project: 'Opus 4.6 project', desc: '13yr dormant, now building' },
+  { name: 'srinichillara', created: '2016', age: '10yr', repos: 1,  project: 'vibe-pm', desc: 'First ever repo! PM tool with Opus' },
+  { name: 'ronnsen123',    created: '2016', age: '10yr', repos: 1,  project: 'Opus project', desc: 'Account since 2016, 1 repo total' },
+  { name: 'tomasmihalyi',  created: '2016', age: '10yr', repos: 5,  project: 'Opus project', desc: 'Reactivated after a decade' },
+  { name: 'bryanjpg',      created: '2019', age: '7yr',  repos: 4,  project: 'Opus project', desc: '7yr old account, barely used' },
+  { name: 'rdy4trvl',      created: '2016', age: '10yr', repos: 4,  project: 'Opus project', desc: 'Dormant 10yr account' },
+  { name: 'brb-dreaming',  created: '2024', age: '2yr',  repos: 4,  project: 'biological-twin', desc: 'DNA mirror \u2014 hackathon entry, 12\u2605' },
+  { name: 'jphein',        created: '2016', age: '10yr', repos: 40, project: 'speech-to-cli + 9 more', desc: 'Re-energized: 12 new repos in Mar 2026, 7 w/ Opus commits' },
+];
+
+var newDevs = [
+  { name: 'thang97-21',           created: '2026-03', repos: 1,  desc: 'Joined Mar 2026, 1st repo is Opus 4.6 project' },
+  { name: 'lohjohnray-ops',       created: '2026-03', repos: 1,  desc: '"claude opus 4.6 ftw" \u2014 Python, brand new' },
+  { name: 'changbae-son',         created: '2026-02', repos: 1,  desc: 'Created account just to build with Opus' },
+  { name: 'ckloehn',              created: '2026-01', repos: 2,  desc: 'New dev, 2 repos, both AI-assisted' },
+  { name: 'chillqoder',           created: '2026-01', repos: 17, desc: 'GPT-5.4 vs Opus 4.6 vs Gemini comparisons' },
+  { name: 'saidivya25aiengineer', created: '2026-01', repos: 75, desc: 'AI engineer, 75 repos in 3 months' },
+  { name: 'loki-mamv',            created: '2026-01', repos: 82, desc: 'Prolific: 82 repos since Jan 2026' },
+  { name: 'sammeigs-crypto',      created: '2026-01', repos: 6,  desc: 'Baby leap tracker \u2014 vibe-coded with Opus' },
+  { name: 'BoostLabsAU',          created: '2026-02', repos: 5,  desc: 'LLM orchestrator setup, 18\u2605' },
+];
+
+var notableProjects = [
+  { title: 'ClawWatch', author: 'ThinkOffApp', desc: 'First AI agent running natively on a Galaxy Watch \u2014 Vosk offline STT + Opus 4.6. Kotlin.', accent: '#b388ff', lang: 'Kotlin', stars: 23 },
+  { title: 'OpenClaw Book', author: '0xtresser', desc: 'The first book about OpenClaw, entirely written with OpenCode + Opus 4.6. 195\u2605.', accent: '#ff6b35', lang: 'Docs', stars: 195 },
+  { title: 'biological-twin', author: 'brb-dreaming', desc: 'Digital mirror born from your DNA. Hackathon entry from a dormant account.', accent: '#69f0ae', lang: 'TypeScript', stars: 12 },
+  { title: 'SomaFM-for-CardPuter', author: 'dr3d', desc: 'Internet radio for M5Stack Cardputer. Built by a 17yr-old GitHub account with 5 total repos.', accent: '#00e5ff', lang: 'C++', stars: 6 },
+  { title: 'Impossible-Moments', author: 'muratcankoylan', desc: '420-scenario AGI benchmark for creative constraint satisfaction, single Claude Code session.', accent: '#ff5277', lang: 'Python', stars: 6 },
+  { title: 'FlipSide', author: 'voelspriet', desc: 'Upload any contract, see what the drafter intended you to miss. Hackathon 2026.', accent: '#ffd740', lang: 'HTML', stars: 7 },
+  { title: 'council-sim', author: 'tony-42069', desc: '5 AI agents debate city council proposals in real-time. TypeScript.', accent: '#b388ff', lang: 'TypeScript', stars: 2 },
+  { title: 'case-nexus', author: 'eliBenven', desc: 'AI-powered legal caseload intelligence with Opus 4.6 extended thinking.', accent: '#ff6b35', lang: 'Python', stars: 2 },
+];
+
+var copilotContext = [
+  { value: '4.7M', label: 'Copilot Paid Subscribers', note: 'Jan 2026, +75% YoY', color: '#00e5ff' },
+  { value: '90%', label: 'Fortune 100 Using Copilot', note: 'With Opus 4.6 access', color: '#ff6b35' },
+  { value: '6', label: 'IDEs Supported', note: 'VS Code, VS, JetBrains, Xcode, Eclipse, Mobile', color: '#b388ff' },
+];
+
+// ── HELPERS ──
+
+function el(tag, props, children) {
+  var e = document.createElement(tag);
+  if (props) {
+    Object.keys(props).forEach(function(k) {
+      if (k === 'style' && typeof props[k] === 'object') Object.assign(e.style, props[k]);
+      else if (k === 'className') e.className = props[k];
+      else if (k === 'textContent') e.textContent = props[k];
+      else if (k.startsWith('data-')) e.setAttribute(k, props[k]);
+      else e.setAttribute(k, props[k]);
+    });
+  }
+  if (children) children.forEach(function(c) { if (c) e.appendChild(c); });
+  return e;
+}
+
+function svgEl(tag, attrs) {
+  var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  if (attrs) Object.keys(attrs).forEach(function(k) { e.setAttribute(k, attrs[k]); });
+  return e;
+}
+
+// ── RENDERERS ──
+
+function animateCounters() {
+  document.querySelectorAll('[data-count]').forEach(function(elem) {
+    var target = parseInt(elem.getAttribute('data-count'));
+    var dur = 1500, start = performance.now();
+    function tick(now) {
+      var p = Math.min((now - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      elem.textContent = Math.round(target * eased).toLocaleString();
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+function renderTimeline() {
+  var c = document.getElementById('timeline-chart');
+  var max = Math.max.apply(null, weeklyData.map(function(d) { return d.count; }));
+  var cols = ['#00e5ff','#00d4ee','#00c3dd','#00b2cc','#00a1bb','#0090aa','#007f99'];
+  weeklyData.forEach(function(d, i) {
+    var tip = el('span', { className: 'timeline-tooltip', textContent: d.count + ' repos' });
+    var bar = el('div', { className: 'timeline-bar', style: { background: cols[i], height: '0px' } }, [tip]);
+    var lbl = el('div', { className: 'timeline-label', textContent: d.label });
+    c.appendChild(el('div', { className: 'timeline-bar-group' }, [bar, lbl]));
+    setTimeout(function() { bar.style.height = Math.round((d.count / max) * 140) + 'px'; }, 200 + i * 100);
+  });
+}
+
+function renderBarChart(containerId, data) {
+  var c = document.getElementById(containerId);
+  var max = Math.max.apply(null, data.map(function(d) { return d.count; }));
+  data.forEach(function(d, i) {
+    var fill = el('div', { className: 'bar-fill', style: { background: d.color } });
+    var row = el('div', { className: 'bar-row' }, [
+      el('div', { className: 'bar-label', textContent: d.name }),
+      el('div', { className: 'bar-track' }, [fill]),
+      el('div', { className: 'bar-value', textContent: String(d.count) })
+    ]);
+    c.appendChild(row);
+    setTimeout(function() { fill.style.width = Math.round((d.count / max) * 100) + '%'; }, 400 + i * 60);
+  });
+}
+
+function renderDonut(svgId, legendId, data) {
+  var svg = document.getElementById(svgId);
+  var legend = document.getElementById(legendId);
+  var total = data.reduce(function(s, d) { return s + Math.max(d.value, 1); }, 0);
+  var cx = 80, cy = 80, r = 60, sw = 22, circ = 2 * Math.PI * r, offset = 0;
+  data.forEach(function(d, i) {
+    var dv = Math.max(d.value, 1), ratio = dv / total;
+    var dashLen = ratio * circ, dashGap = circ - dashLen;
+    var circle = svgEl('circle', { cx: cx, cy: cy, r: r, fill: 'none', stroke: d.color, 'stroke-width': sw, 'stroke-dasharray': dashLen + ' ' + dashGap, 'stroke-dashoffset': String(-offset), transform: 'rotate(-90 ' + cx + ' ' + cy + ')' });
+    circle.style.transition = 'stroke-dasharray 1s cubic-bezier(0.16,1,0.3,1) ' + (i * 0.15) + 's';
+    svg.appendChild(circle);
+    offset += dashLen;
+    legend.appendChild(el('div', { className: 'legend-item' }, [
+      el('span', { className: 'legend-dot', style: { background: d.color } }),
+      el('span', { className: 'legend-label', textContent: d.label }),
+      el('span', { className: 'legend-value', textContent: d.value > 0 ? d.value.toLocaleString() : '\u2014' })
+    ]));
+  });
+}
+
+function renderRepoTable() {
+  var c = document.getElementById('repo-section');
+  c.appendChild(el('div', { className: 'repo-row', style: { borderBottom: '2px solid #2a2a30' } }, [
+    el('div', { className: 'bar-label', style: { textAlign: 'right' }, textContent: '#' }),
+    el('div', { className: 'bar-label', style: { textAlign: 'left', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Repository' }),
+    el('div', { className: 'bar-label', style: { textAlign: 'left', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Language' }),
+    el('div', { className: 'bar-label', style: { textAlign: 'right', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Stars' })
+  ]));
+  topRepos.forEach(function(r, i) {
+    var link = el('a', { className: 'repo-link', href: 'https://github.com/' + r.name, target: '_blank', textContent: r.name });
+    var langCol = el('div', { className: 'repo-lang' });
+    if (r.lang) { langCol.appendChild(el('span', { className: 'lang-dot', style: { background: r.lc } })); langCol.appendChild(document.createTextNode(r.lang)); }
+    else { langCol.textContent = '\u2014'; }
+    c.appendChild(el('div', { className: 'repo-row reveal', style: { transitionDelay: (i * 0.04) + 's' } }, [
+      el('div', { className: 'repo-rank', textContent: String(r.rank) }),
+      el('div', { className: 'repo-name-col' }, [link, el('div', { className: 'repo-desc', textContent: r.desc })]),
+      langCol,
+      el('div', { className: 'repo-stars', textContent: r.stars.toLocaleString() + ' \u2605' })
+    ]));
+  });
+}
+
+function renderNotable() {
+  var g = document.getElementById('notable-grid');
+  notableProjects.forEach(function(p, i) {
+    g.appendChild(el('div', { className: 'notable-card reveal', style: { transitionDelay: (i * 0.08) + 's' } }, [
+      el('div', { className: 'notable-accent', style: { background: p.accent } }),
+      el('div', { className: 'notable-header' }, [
+        el('div', { className: 'notable-title', textContent: p.title }),
+        el('div', { className: 'notable-stars', textContent: p.stars + ' \u2605' })
+      ]),
+      el('div', { className: 'notable-meta', textContent: '@' + p.author + ' \u00b7 ' + p.lang }),
+      el('div', { className: 'notable-desc', textContent: p.desc })
+    ]));
+  });
+}
+
+function renderDevCards(containerId, devs, isDormant) {
+  var g = document.getElementById(containerId);
+  devs.forEach(function(d, i) {
+    var iconBg = isDormant ? 'var(--accent-rose)' : 'var(--accent-gold)';
+    var iconText = isDormant ? '\u23F0' : '\u2728';
+    var tagColor = isDormant ? 'var(--accent-rose)' : 'var(--accent-gold)';
+    var tagBg = isDormant ? 'rgba(255,82,119,0.15)' : 'rgba(255,215,64,0.15)';
+    var tagText = isDormant ? (d.age + ' on GitHub, ' + d.repos + ' repo' + (d.repos > 1 ? 's' : '') + ' total') : ('Joined ' + d.created + ', ' + d.repos + ' repo' + (d.repos > 1 ? 's' : ''));
+
+    var icon = el('div', { className: 'dev-icon', style: { background: isDormant ? 'rgba(255,82,119,0.15)' : 'rgba(255,215,64,0.15)' }, textContent: iconText });
+    var nameEl = el('div', { className: 'dev-name', textContent: '@' + d.name });
+    var descEl = el('div', { className: 'dev-detail', textContent: isDormant ? d.project + ' \u2014 ' + d.desc : d.desc });
+    var tag = el('div', { className: 'dev-tag', style: { color: tagColor, background: tagBg }, textContent: tagText });
+    var info = el('div', { className: 'dev-info' }, [nameEl, descEl, tag]);
+    g.appendChild(el('div', { className: 'dev-card reveal', style: { transitionDelay: (i * 0.06) + 's' } }, [icon, info]));
+  });
+}
+
+function renderCopilotContext() {
+  var g = document.getElementById('context-grid');
+  copilotContext.forEach(function(c, i) {
+    var card = el('div', { className: 'chart-box reveal', style: { textAlign: 'center', transitionDelay: (i * 0.1) + 's' } });
+    var accent = el('div', { style: { position: 'absolute', top: '0', left: '0', right: '0', height: '2px', background: c.color } });
+    var val = el('div', { style: { fontFamily: 'var(--font-serif)', fontSize: '42px', color: c.color, marginBottom: '8px' }, textContent: c.value });
+    var lbl = el('div', { className: 'stat-label', textContent: c.label });
+    var note = el('div', { style: { fontSize: '10px', color: 'var(--text-dim)', marginTop: '8px' }, textContent: c.note });
+    card.appendChild(accent);
+    card.appendChild(val);
+    card.appendChild(lbl);
+    card.appendChild(note);
+    g.appendChild(card);
+  });
+}
+
+// ── LIBRARY DATA ──
+// signal: 'explicit' = description/topic mentions Opus 4.6
+//         'config'   = CLAUDE.md or .claude/ settings found
+//         'commit'   = Co-Authored-By commit signature
+//         'under'    = using Opus 4.6 under the hood (proxy, integration, etc.)
+//         'hackathon'= built at the Cerebral Valley hackathon
+var libraryData = [
+  // === TOP STARRED ===
+  { name: 'anthropics/claudes-c-compiler', stars: 2547, lang: 'Rust', lc: '#dea584', signal: 'explicit', desc: 'Dependency-free C compiler in Rust \u2014 compiles Linux kernel, PostgreSQL, DOOM' },
+  { name: 'yaroslavyaroslav/OpenAI-sublime-text', stars: 434, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'Sublime Text AI assistant supporting Opus 4.6, GPT-5, Gemini 3' },
+  { name: 'Eric86777/vps-tcp-tune', stars: 245, lang: 'Shell', lc: '#89e051', signal: 'explicit', desc: 'BBR3+FQ TCP network tuning, docs written by Opus 4.6' },
+  { name: '0xtresser/OpenClaw-Book', stars: 195, lang: '', lc: '#666', signal: 'explicit', desc: 'First book about OpenClaw, entirely written with Opus 4.6' },
+  { name: 'ucsandman/OpenClaw-Hierarchical-Memory-System', stars: 110, lang: '', lc: '#666', signal: 'explicit', desc: 'Hierarchical memory system for OpenClaw agents on Opus 4.6' },
+  { name: 'anyofai/poe', stars: 55, lang: '', lc: '#666', signal: 'under', desc: 'Poe subscription guide (GPT-5.2, Opus 4.6, Gemini 3.1 Pro)' },
+  { name: '0xtresser/OpenCode-Book', stars: 42, lang: '', lc: '#666', signal: 'explicit', desc: 'Book about OpenCode, written with OpenCode + Opus 4.6' },
+  { name: 'pjq/sap-ai-core-llm-proxy', stars: 29, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'SAP AI Core LLM proxy (GPT-5, Opus 4.6, Gemini)' },
+  { name: 'johnpsasser/claude-code-prompt-optimizer', stars: 28, lang: 'JavaScript', lc: '#f1e05a', signal: 'explicit', desc: 'AI prompt optimization hook using Opus 4.6 reasoning' },
+  { name: 'ThinkOffApp/ClawWatch', stars: 23, lang: 'Kotlin', lc: '#A97BFF', signal: 'explicit', desc: 'First AI agent on a Galaxy Watch \u2014 Vosk STT + Opus 4.6' },
+  { name: 'SovranAMR/claude-code-via-antigravity', stars: 23, lang: 'JavaScript', lc: '#f1e05a', signal: 'under', desc: 'Free Claude Code (Opus 4.6) via Google Antigravity' },
+  { name: 'BoostLabsAU/LLM-Orchestrator-coder-setup', stars: 18, lang: '', lc: '#666', signal: 'explicit', desc: 'Orchestrator \u2194 Coding agent workflow with Opus 4.6' },
+  { name: 'chandika/openclaw-model-router', stars: 14, lang: '', lc: '#666', signal: 'explicit', desc: 'Intelligent routing: Sonnet 4.6 vs Opus 4.6 by task' },
+  { name: 'brb-dreaming/biological-twin', stars: 12, lang: 'TypeScript', lc: '#3178c6', signal: 'hackathon', desc: 'Digital mirror from your DNA \u2014 hackathon entry' },
+  { name: 'esagduyu/project-tiro', stars: 12, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Local-first reading OS for the AI age' },
+  { name: 'flyryan/ai-news-aggregator', stars: 11, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Multi-agent AI news pipeline with extended thinking' },
+  // === MEDIUM STARRED ===
+  { name: 'CYGDEN/WORLD.AI', stars: 9, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus 4.6' },
+  { name: 'davfd/foundation-alignment-cross-architecture', stars: 9, lang: '', lc: '#666', signal: 'explicit', desc: 'Cross-model alignment validation from 4,312 adversarial scenarios' },
+  { name: 'az9713/claude-cowork-content-plugin', stars: 8, lang: '', lc: '#666', signal: 'hackathon', desc: '6 Opus 4.6 agents built a plugin in 5 min + 5,298 lines of docs' },
+  { name: 'echosoar/raft', stars: 8, lang: 'HTML', lc: '#e34c26', signal: 'explicit', desc: '3D raft survival game generated with Opus 4.6' },
+  { name: 'voelspriet/flipside', stars: 7, lang: 'HTML', lc: '#e34c26', signal: 'hackathon', desc: 'Contract analysis \u2014 see what the drafter intended you to miss' },
+  { name: '736773174/claude-code-free', stars: 7, lang: '', lc: '#666', signal: 'explicit', desc: 'Claude Code setup guide + AWS $200 free for Opus 4.6' },
+  { name: 'muratcankoylan/Impossible-Moments', stars: 6, lang: 'Python', lc: '#3572A5', signal: 'hackathon', desc: '420-scenario AGI benchmark, single Claude Code session' },
+  { name: 'dr3d/SomaFM-for-CardPuter', stars: 6, lang: 'C++', lc: '#f34b7d', signal: 'explicit', desc: 'Internet radio for M5Stack Cardputer, vibe-coded with Opus' },
+  { name: 'cobusgreyling/claude-agent-teams', stars: 6, lang: 'Shell', lc: '#89e051', signal: 'explicit', desc: 'Claude Code Agent Teams \u2014 multi-agent from terminal' },
+  { name: 'centminmod/sonoma-dusk-sky-alpha-evaluation', stars: 6, lang: '', lc: '#666', signal: 'explicit', desc: 'AI model performance evaluation including Opus 4.6' },
+  { name: 'CheswickDEV/claude-opus-4.6-prompt-optimizer', stars: 5, lang: '', lc: '#666', signal: 'explicit', desc: 'Meta-prompting system optimized for Opus 4.6' },
+  { name: 'openclaw-claude-proxy/openclaw-claude-proxy', stars: 5, lang: 'Shell', lc: '#89e051', signal: 'under', desc: 'Opus 4.6 Telegram AI assistant via Claude Max' },
+  { name: 'gmickel/Claude-Code-Kickstarter', stars: 5, lang: '', lc: '#666', signal: 'config', desc: 'Workflow automation setup for Claude Code' },
+  { name: 'MuzafferH/prisma-decision-engine', stars: 4, lang: 'JavaScript', lc: '#f1e05a', signal: 'explicit', desc: 'PRISMA \u2014 Decision intelligence engine, 1,000 futures' },
+  { name: 'centminmod/claude-haiku-4.5-evaluation', stars: 4, lang: '', lc: '#666', signal: 'explicit', desc: 'LLM performance comparison including Opus 4.6' },
+  { name: 'Instant-Unicorn/morphbox', stars: 4, lang: 'Svelte', lc: '#ff3e00', signal: 'under', desc: 'Browser-based IDE wrapper for Claude Code' },
+  { name: 'exactlyallan/DodgeRock', stars: 4, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'Retro pixel-art side-scrolling game with PixiJS + Opus 4.6' },
+  { name: 'wbbtmusic/openclaw-antigravity-oauth', stars: 4, lang: 'JavaScript', lc: '#f1e05a', signal: 'under', desc: 'OpenClaw plugin \u2014 Google OAuth for Opus 4.6 & Sonnet 4.6' },
+  // === LOW STARRED ===
+  { name: 'filipvabrousek/SwiftUI-macOS-video-editor', stars: 3, lang: 'Swift', lc: '#F05138', signal: 'explicit', desc: 'macOS video editor built with Claude Opus 4.6' },
+  { name: 'dart-technologies/clawfree', stars: 3, lang: 'Dart', lc: '#00B4AB', signal: 'explicit', desc: 'Clawfree \u2014 Dart experiment with Opus 4.6' },
+  { name: 'BayramAnnakov/tacit', stars: 3, lang: 'Python', lc: '#3572A5', signal: 'config', desc: 'Extract tacit knowledge from GitHub PRs \u2192 CLAUDE.md files' },
+  { name: 'chillqoder/GPT-Claude-Gemini-Test-1', stars: 3, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'GPT 5.4 vs Claude Opus 4.6 vs Gemini 3.1 Pro comparison' },
+  { name: 'CYGDEN/DPI', stars: 3, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus 4.6 \u2014 DPI module' },
+  { name: 'msftsean/ai-hackathon-use-cases', stars: 3, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'AI solution implementation guides' },
+  { name: 'tony-42069/council-sim', stars: 2, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: '5 AI agents debate city council proposals in real-time' },
+  { name: 'ryan-allen/car-wash-evals', stars: 2, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Car wash evaluation benchmark \u2014 "You should definitely walk!"' },
+  { name: 'eliBenven/case-nexus', stars: 2, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'AI legal caseload intelligence with Opus 4.6 extended thinking' },
+  { name: 'lightsofapollo/opus-codex-spark', stars: 2, lang: '', lc: '#666', signal: 'explicit', desc: 'Opus 4.6 orchestrator + Codex 5.3 Spark sub-agents' },
+  { name: 'OpenSalesClaw/OpenSalesClaw', stars: 2, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Open source CRM built with Copilot + Opus 4.6' },
+  { name: 'AndreasKl/vibe-coding-trelyolo-clone', stars: 2, lang: 'Go', lc: '#00ADD8', signal: 'explicit', desc: 'FlowBoard \u2014 kanban clone, Opus 4.6 + RTK' },
+  { name: 'jarrodwatts/scuttlepay', stars: 2, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'Bank account for AI agents \u2014 wallet with spending controls' },
+  { name: 'patelshrey40/rutgers-health-ai-feedback', stars: 2, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'Medical education feedback system' },
+  { name: 'hootie0971/claude-code-via-antigravity', stars: 2, lang: 'JavaScript', lc: '#f1e05a', signal: 'under', desc: 'Free Claude Code proxy access' },
+  { name: 'jiaqizou-msft/AgenticOS-ClaudeOpus4.6', stars: 2, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'AgenticOS for Claude Opus 4.6' },
+  { name: 'CYGDEN/GODCUBE', stars: 2, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus 4.6 \u2014 GODCUBE' },
+  { name: 'CYGDEN/SOUNDCONVERT', stars: 2, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus 4.6 \u2014 audio conversion' },
+  { name: 'CYGDEN/HL2GODOT', stars: 2, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus 4.6 \u2014 HL2 Godot port' },
+  { name: 'CYGDEN/JAVAMINE', stars: 2, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus 4.6 \u2014 Java module' },
+  { name: 'CYGDEN/OPIUM', stars: 2, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus/Sonnet 4.6' },
+  { name: 'sikbbang-study/claude-opus-4.6-system-prompt', stars: 2, lang: '', lc: '#666', signal: 'explicit', desc: 'Leaked Opus 4.6 system prompt (2026-02-09)' },
+  { name: 'itonx/ai-model-comparison', stars: 1, lang: 'Astro', lc: '#ff5a03', signal: 'explicit', desc: 'Comparing Opus 4.5/4.6, Gemini Flash, GPT Codex' },
+  { name: 'wpn10/episim', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Epidemic modeling \u2192 interactive simulators, 1M context' },
+  { name: 'claude-ai-opus-4-6/claude-opus-4.6', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Local server/CLI for Opus 4.6 \u2014 "Unlocked"' },
+  { name: 'VersoXBT/original_performance_takehome', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Anthropic perf take-home: 1,339 cycles, 110.3x speedup' },
+  { name: 'kamb-code/Voynich', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'Voynich manuscript decipherment using Claude' },
+  { name: 'webcpu/deep-research-skill', stars: 1, lang: '', lc: '#666', signal: 'config', desc: 'Research agent skill for Claude Code' },
+  { name: 'mogilishivaram/ai-resume-builder', stars: 1, lang: 'JavaScript', lc: '#f1e05a', signal: 'explicit', desc: 'AI resume builder \u2014 Copilot Pro + Opus 4.6' },
+  { name: 'CYGDEN/OS', stars: 1, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus 4.6 \u2014 OS module' },
+  { name: 'CYGDEN/CPPMINE', stars: 2, lang: '', lc: '#666', signal: 'explicit', desc: 'ARENA.AI <> Claude Opus 4.6 \u2014 C++ module' },
+  // === ZERO STARS (selected) ===
+  { name: 'Hixon10/http-bridge-proxy', stars: 0, lang: 'Rust', lc: '#dea584', signal: 'explicit', desc: 'Vibe-coded TCP-over-HTTP tunnel: SOCKS5 \u2192 HTTP \u2192 TCP' },
+  { name: 'iDouglasD/dev-roast', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'AI code roasting app with terminal aesthetics + Opus 4.6' },
+  { name: 'dolepee/ilm-intent-router', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'AI-guarded intent liquidity market \u2014 Opus 4.6 screens MEV risk' },
+  { name: 'vijpatel7/andrej-karpathy-llm-guidance', stars: 0, lang: '', lc: '#666', signal: 'explicit', desc: 'Skills created with Opus and Codex from Karpathy tweet' },
+  { name: 'newaiproxy/claude-opus-4-6', stars: 0, lang: '', lc: '#666', signal: 'under', desc: 'Chinese API proxy service for Claude Opus 4.6' },
+  { name: 'lperezmo/st-rsuite', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'RSuite Streamlit components built with Opus 4.6' },
+  { name: 'openssora/Claude-Pro-Upgrade', stars: 0, lang: '', lc: '#666', signal: 'explicit', desc: 'Claude Pro subscription guide (Chinese)' },
+  { name: 'dmbartles/math-defense-the-last-frontier', stars: 0, lang: 'HTML', lc: '#e34c26', signal: 'explicit', desc: 'Math Defense game \u2014 Claude Opus 4.6 experiment' },
+  { name: 'lohjohnray-ops/jwj2026-1', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: '"claude opus 4.6 ftw" \u2014 brand new developer' },
+  { name: 'GetFractional/Job-Filter-v2', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'Job filter app \u2014 Claude Opus 4.6 build' },
+  { name: 'todsawat/set-financial-app', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Thai stock financial analysis app, built by Opus 4.6' },
+  { name: 'saidivya25aiengineer/Anthropic_Claude-Opus-4.6', stars: 0, lang: '', lc: '#666', signal: 'explicit', desc: 'Claude Opus 4.6 by Anthropic' },
+  { name: 'kenpassion8-rgb/chuanda-claude-opus-4.6', stars: 0, lang: 'HTML', lc: '#e34c26', signal: 'explicit', desc: 'Chuanda Claude Opus 4.6 project' },
+  { name: 'Joseph19820124/claude-opus-comparison', stars: 0, lang: 'HTML', lc: '#e34c26', signal: 'explicit', desc: 'Claude Opus 4.5 vs 4.6 benchmark comparison' },
+  { name: 'LeakeZ/claudeMetaOpus4.6', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Claude Meta Opus 4.6 toolkit' },
+  { name: 'sammeigs-crypto/baby-leap-tracker', stars: 0, lang: 'HTML', lc: '#e34c26', signal: 'explicit', desc: 'Wonder Weeks clone \u2014 vibe-coded with Opus 4.6' },
+  { name: 'srinichillara/vibe-pm', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'Sample code generated from Opus 4.6 \u2014 first ever repo' },
+  { name: 'mamanteo/parking-space', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'Parking Space app created by Claude Opus 4.6' },
+  { name: 'wellwelwel/sessioner', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'config', desc: 'CLI for managing Claude Code sessions' },
+  { name: 'affaan-m/everything-claude-code', stars: 0, lang: '', lc: '#666', signal: 'hackathon', desc: 'Agent harness optimization \u2014 skills, memory, security' },
+  // === TOPIC-ONLY (opus-4-6 topic page) ===
+  { name: 'piomin/ai-generated-apps', stars: 15, lang: 'Java', lc: '#b07219', signal: 'under', desc: 'Spring Boot apps created with Claude Opus' },
+  { name: 'wanikua/ai-court-skill', stars: 6, lang: 'Shell', lc: '#89e051', signal: 'config', desc: 'Discord multi-agent team powered by Claude' },
+  // === CO-AUTHORED COMMITS ===
+  { name: 'arjdroid/artiist', stars: 0, lang: 'Rust', lc: '#dea584', signal: 'commit', desc: 'ASCII art generator, co-authored by Claude Opus' },
+  { name: 'mirandazhaoai/twitter-digest', stars: 0, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'Twitter timeline scraper with AI analysis, Claude co-authored' },
+  { name: 'isoboot/isoboot', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'PXE boot and install from ISO \u2014 Claude co-authored commits' },
+  { name: 'thewh1teagle/vibe', stars: 0, lang: '', lc: '#666', signal: 'commit', desc: 'Vibe project with Claude Opus 4.6 co-author commits' },
+  // === jphein \u2014 "Re-energized Veteran" (10yr account, 7 Opus 4.6 repos) ===
+  { name: 'jphein/speech-to-cli', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'MCP Server voice interface for Claude Code, Gemini CLI, Copilot CLI' },
+  { name: 'jphein/cloud-chat-assistant', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'MCP server for Azure AI Foundry \u2014 GPT-5.3, grok-3, Llama, DeepSeek' },
+  { name: 'jphein/claude-code-switcher', stars: 0, lang: 'Shell', lc: '#89e051', signal: 'commit', desc: 'Switch Claude Code between API providers and model tiers from CLI' },
+  { name: 'jphein/gnome-speaks', stars: 0, lang: 'JavaScript', lc: '#f1e05a', signal: 'commit', desc: 'GNOME Shell TTS/STT extension powered by Azure Speech Services' },
+  { name: 'jphein/hostname-badge', stars: 0, lang: 'JavaScript', lc: '#f1e05a', signal: 'commit', desc: 'GNOME Shell extension: floating hostname badge with SSH detection' },
+  { name: 'jphein/claudedoublehours', stars: 0, lang: 'JavaScript', lc: '#f1e05a', signal: 'commit', desc: 'GNOME extension tracking Claude 2\u00d7 off-peak hours promotion' },
+  { name: 'jphein/artcardsv5', stars: 0, lang: 'CSS', lc: '#563d7c', signal: 'commit', desc: 'Art card game with deck pile, layout modes, tabbed dock' },
+  { name: 'jphein/azure-tts-book', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'commit', desc: 'Batch text-to-speech audiobook conversion via Azure (Sonnet 4.6 co-authored)' },
+  { name: 'jphein/gstack', stars: 0, lang: '', lc: '#666', signal: 'config', desc: 'Garry Tan\'s Claude Code setup: 10 tools as CEO, Eng Manager, QA, etc.' },
+  { name: 'jphein/minecraft-bedrock-linux', stars: 1, lang: 'Shell', lc: '#89e051', signal: 'config', desc: 'Minecraft Bedrock on Ubuntu via Lutris + GDK-Proton' },
+  // === MAJOR PRODUCTION PROJECTS (hidden Opus 4.6 in configs/actions) ===
+  { name: 'discourse/discourse', stars: 43000, lang: 'Ruby', lc: '#701516', signal: 'under', desc: 'Major forum platform \u2014 AI plugin locale files reference claude-opus-4-6' },
+  { name: 'Aider-AI/aider', stars: 30000, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'AI pair programmer \u2014 model-settings.yml includes Opus 4.6 config' },
+  { name: 'PrefectHQ/fastmcp', stars: 23800, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'MCP server framework \u2014 action.yml references Opus 4.6 model' },
+  { name: 'ruvnet/ruflo', stars: 21800, lang: 'TypeScript', lc: '#3178c6', signal: 'under', desc: 'Agent orchestration \u2014 .claude/settings.json configures Opus 4.6' },
+  { name: 'elastic/kibana', stars: 20000, lang: 'TypeScript', lc: '#3178c6', signal: 'under', desc: 'Elasticsearch dashboard \u2014 serverless config includes claude-opus-4-6' },
+  { name: 'promptfoo/promptfoo', stars: 17600, lang: 'TypeScript', lc: '#3178c6', signal: 'under', desc: 'LLM eval tool \u2014 GitHub Actions workflow runs Claude Code with Opus' },
+  { name: 'vxcontrol/pentagi', stars: 10000, lang: 'Go', lc: '#00ADD8', signal: 'under', desc: 'Autonomous AI pentest system \u2014 Bedrock models.yml includes Opus 4.6' },
+  { name: 'marimo-team/marimo', stars: 10000, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'Reactive Python notebooks \u2014 LLM model data includes Opus 4.6' },
+  { name: 'ChrisWiles/claude-code-showcase', stars: 5500, lang: 'TypeScript', lc: '#3178c6', signal: 'under', desc: 'Claude Code showcase \u2014 PR review workflows use Opus models' },
+  { name: 'crmne/ruby_llm', stars: 3700, lang: 'Ruby', lc: '#701516', signal: 'under', desc: 'Unified Ruby LLM API \u2014 docs config lists Opus 4.6' },
+  { name: 'shader-slang/slang', stars: 3300, lang: 'C++', lc: '#f34b7d', signal: 'under', desc: 'GPU shader compiler \u2014 Claude Code runner action configured for Opus 4.6' },
+  { name: 'AutoMaker-Org/automaker', stars: 3000, lang: 'TypeScript', lc: '#3178c6', signal: 'config', desc: 'Autonomous AI dev studio \u2014 CLAUDE.md references Opus 4.6' },
+  { name: 'mikeyobrien/ralph-orchestrator', stars: 2200, lang: 'TypeScript', lc: '#3178c6', signal: 'under', desc: 'AI agent orchestration \u2014 ralph.roo.yml specifies Opus 4.6' },
+  { name: 'UKGovernmentBEIS/inspect_ai', stars: 2000, lang: 'Python', lc: '#3572A5', signal: 'under', desc: 'UK Gov AI safety evals \u2014 Anthropic model data includes Opus 4.6' },
+  { name: 'AutoForgeAI/autoforge', stars: 1700, lang: 'Python', lc: '#3572A5', signal: 'config', desc: 'AI code generation \u2014 CLAUDE.md references Opus 4.6' },
+  { name: 'feiskyer/claude-code-settings', stars: 1200, lang: '', lc: '#666', signal: 'config', desc: 'Claude Code settings collection \u2014 includes Opus 4.6 configs' },
+  { name: 'archestra-ai/archestra', stars: 406, lang: '', lc: '#666', signal: 'under', desc: 'Enterprise AI + MCP registry \u2014 action files use Opus 4.6' },
+  // === BROADER SEARCH FINDS ===
+  { name: 'mikeOnBreeze/cc-crossbeam', stars: 159, lang: 'Python', lc: '#3572A5', signal: 'hackathon', desc: 'Reads architectural plans, interprets city corrections, cross-refs CA law' },
+  { name: 'cloudstreet-dev/Lisp-in-2025', stars: 41, lang: 'CSS', lc: '#563d7c', signal: 'explicit', desc: 'Where we\'re at with Lisp, by Claude Code Opus' },
+  { name: 'bizz84/voice_timer_claude_demo', stars: 20, lang: 'Dart', lc: '#00B4AB', signal: 'explicit', desc: 'Claude Code Opus 4 crash course source code' },
+  { name: 'Dallionking/cross-model-agents', stars: 13, lang: 'Shell', lc: '#89e051', signal: 'explicit', desc: 'Bidirectional adversarial review: Opus vs Codex CLI (GPT-5.4)' },
+  { name: 'cloudstreet-dev/Computers', stars: 11, lang: '', lc: '#666', signal: 'explicit', desc: 'A book about computer science, by Claude Code Opus' },
+  { name: 'tomasmihalyi/claude-forge', stars: 5, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Self-extending Claude Code agent that detects capability gaps' },
+  { name: 'cloudstreet-dev/Because-Ruby', stars: 5, lang: '', lc: '#666', signal: 'explicit', desc: 'Ruby advocacy book by Claude Code Opus' },
+  { name: '30mb1/AI-contracts-claude-code-opus4.5', stars: 4, lang: 'Solidity', lc: '#AA6746', signal: 'explicit', desc: 'AI-generated smart contracts via Claude Code Opus' },
+  { name: 'firecrawl/firecrawl-coupon-finder', stars: 3, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'Chrome extension built with Opus 4.6 Agent Teams + Firecrawl' },
+  { name: 'tyrchen/ghc', stars: 3, lang: 'Rust', lc: '#dea584', signal: 'explicit', desc: 'GH CLI Rust reimplementation, built by Opus 4.6' },
+  { name: 'omerakben/opus-nx', stars: 3, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'AI reasoning research: persistent reasoning graphs, multi-agent swarms' },
+  { name: 'Patysko/ARIA', stars: 3, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'AI agent with self-improvement + compressed memory. Vibecoded w/ Opus' },
+  { name: 'bladnman/the_shows__claude_code_opus', stars: 3, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'Shows app built with Claude Code Opus' },
+  { name: 'TaylorLegalEngineering/deposition-contradiction-analysis', stars: 2, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: '5-round multi-agent deposition analysis, 40 parallel Opus 4.6 calls' },
+  { name: 'exa-labs/opus-v-oai', stars: 2, lang: 'TypeScript', lc: '#3178c6', signal: 'explicit', desc: 'Real-time analysis of engineer reactions to Opus 4.6 vs Codex 5.3' },
+  { name: 'luislavena/just_html.cr', stars: 2, lang: 'Crystal', lc: '#000100', signal: 'commit', desc: 'JustHTML port to Crystal, done by Claude Code Opus' },
+  { name: 'obutuz/swarmshield', stars: 1, lang: 'Elixir', lc: '#6e4a7e', signal: 'explicit', desc: 'AI Agent Firewall: swarm of Opus 4.6 agents deliberate on flagged events' },
+  { name: 'selimozten/lale', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'explicit', desc: 'Turkish instruct model distilled from Opus 4.6 outputs' },
+  { name: 'Ezward/vibe-basic', stars: 1, lang: 'Rust', lc: '#dea584', signal: 'explicit', desc: 'BASIC interpreter in Rust created with Opus 4.6' },
+  { name: 'kv100/respiro-macos', stars: 1, lang: 'Swift', lc: '#F05138', signal: 'explicit', desc: 'macOS Menu Bar AI Stress Coach built with Opus 4.6' },
+  { name: 'geoffrey-young/anthropic-hackathon-2026', stars: 1, lang: 'Python', lc: '#3572A5', signal: 'hackathon', desc: 'Claude Code Canary: early warning system for plugin security' },
+  { name: 'Stellantis-ADX/pr-reviewer-aipdp', stars: 0, lang: '', lc: '#666', signal: 'under', desc: 'Stellantis (automotive) LLM code review bot \u2014 uses Opus 4.6' },
+  { name: 'espallargas/anthropic-opus-4.6-hackathon', stars: 0, lang: 'TypeScript', lc: '#3178c6', signal: 'hackathon', desc: 'Anthropic Opus 4.6 hackathon submission' },
+  { name: 'remifrancois/cognitivevoicefingerprint', stars: 0, lang: 'JavaScript', lc: '#f1e05a', signal: 'hackathon', desc: 'World\'s first Cognitive Voice Fingerprint engine \u2014 hackathon' },
+  { name: 'gcryptonlabs/FlowCue', stars: 0, lang: 'Swift', lc: '#F05138', signal: 'explicit', desc: 'macOS teleprompter with real-time speech tracking + Opus 4.6' },
+  { name: 'ModernMustardSeed/claude-code-power-pack', stars: 0, lang: 'Shell', lc: '#89e051', signal: 'config', desc: 'Ultimate agentic setup: 4-layer memory, 20 skills, hooks for Opus 4.6' },
+];
+
+// Sort by stars descending
+libraryData.sort(function(a, b) { return b.stars - a.stars; });
+
+var SIGNAL_LABELS = {
+  explicit: 'Explicit',
+  config: 'Config',
+  commit: 'Co-Author',
+  under: 'Under Hood',
+  hackathon: 'Hackathon'
+};
+var SIGNAL_CLASSES = {
+  explicit: 'signal-explicit',
+  config: 'signal-config',
+  commit: 'signal-commit',
+  under: 'signal-under',
+  hackathon: 'signal-hackathon'
+};
+
+var jpheinRepos = [
+  { name: 'speech-to-cli', lang: 'Python', signals: ['CLAUDE.md', 'Opus 4.6 commits'], desc: 'MCP Server voice interface for CLI agents' },
+  { name: 'cloud-chat-assistant', lang: 'Python', signals: ['CLAUDE.md', 'Opus 4.6 commits'], desc: 'MCP server for Azure AI Foundry + multi-cloud' },
+  { name: 'claude-code-switcher', lang: 'Shell', signals: ['CLAUDE.md', 'Opus 4.6 commits'], desc: 'Switch Claude Code between providers/tiers' },
+  { name: 'gnome-speaks', lang: 'JavaScript', signals: ['Opus 4.6 commits'], desc: 'GNOME Shell TTS/STT via Azure Speech' },
+  { name: 'hostname-badge', lang: 'JavaScript', signals: ['CLAUDE.md', 'Opus 4.6 commits'], desc: 'GNOME floating hostname badge + SSH detect' },
+  { name: 'claudedoublehours', lang: 'JavaScript', signals: ['Opus 4.6 commits'], desc: 'Claude 2\u00d7 off-peak hours tracker extension' },
+  { name: 'artcardsv5', lang: 'CSS', signals: ['CLAUDE.md', 'Opus 4.6 commits'], desc: 'Art card game with deck pile + layout modes' },
+  { name: 'azure-tts-book', lang: 'Python', signals: ['Sonnet 4.6 commits'], desc: 'Batch TTS audiobook conversion via Azure' },
+  { name: 'gstack', lang: '', signals: ['CLAUDE.md'], desc: 'Garry Tan\'s Claude Code setup (10 tools)' },
+  { name: 'minecraft-bedrock-linux', lang: 'Shell', signals: ['Post-Feb 2026 creation'], desc: 'Minecraft Bedrock on Ubuntu via Lutris' },
+];
+
+function renderJpheinGrid() {
+  var g = document.getElementById('jphein-grid');
+  jpheinRepos.forEach(function(r, i) {
+    var signalTags = r.signals.map(function(s) {
+      var cls = 'signal-tag ';
+      if (s.indexOf('Opus') !== -1) cls += 'signal-commit';
+      else if (s.indexOf('Sonnet') !== -1) cls += 'signal-under';
+      else if (s.indexOf('CLAUDE') !== -1) cls += 'signal-config';
+      else cls += 'signal-explicit';
+      return el('span', { className: cls, style: { marginRight: '4px' }, textContent: s });
+    });
+
+    var card = el('div', { className: 'dev-card reveal', style: { transitionDelay: (i * 0.05) + 's' } });
+    var langDot = r.lang ? el('span', { className: 'lang-dot', style: { background: '#00e5ff', width: '6px', height: '6px' } }) : null;
+    var icon = el('div', { className: 'dev-icon', style: { background: 'rgba(0,229,255,0.15)', fontSize: '14px' }, textContent: '\u2699' });
+    var nameEl = el('div', { className: 'dev-name' }, [
+      el('a', { className: 'repo-link', href: 'https://github.com/jphein/' + r.name, target: '_blank', textContent: 'jphein/' + r.name })
+    ]);
+    var descEl = el('div', { className: 'dev-detail', textContent: r.desc + (r.lang ? ' \u00b7 ' + r.lang : '') });
+    var tagsRow = el('div', { style: { marginTop: '6px' } }, signalTags);
+    var info = el('div', { className: 'dev-info' }, [nameEl, descEl, tagsRow]);
+    card.appendChild(icon);
+    card.appendChild(info);
+    g.appendChild(card);
+  });
+}
+
+function renderSignals() {
+  var overview = document.getElementById('signals-overview');
+  var cards = document.getElementById('signal-cards');
+
+  var signalCounts = { explicit: 0, under: 0, commit: 0, config: 0, hackathon: 0 };
+  libraryData.forEach(function(r) { signalCounts[r.signal]++; });
+
+  var overviewData = [
+    { icon: '\u{1F4E2}', count: signalCounts.explicit, label: 'Explicit', color: 'var(--accent-cyan)' },
+    { icon: '\u{1F50D}', count: signalCounts.under, label: 'Under Hood', color: 'var(--accent-orange)' },
+    { icon: '\u{1F91D}', count: signalCounts.commit, label: 'Co-Author', color: 'var(--accent-green)' },
+    { icon: '\u2699', count: signalCounts.config, label: 'Config', color: 'var(--accent-violet)' },
+    { icon: '\u{1F3C6}', count: signalCounts.hackathon, label: 'Hackathon', color: 'var(--accent-gold)' }
+  ];
+
+  overviewData.forEach(function(d) {
+    var card = el('div', { className: 'sig-overview-card' });
+    card.style.setProperty('--sig-color', d.color);
+    var before = document.createElement('style');
+    card.appendChild(el('div', { className: 'sig-overview-icon', textContent: d.icon }));
+    card.appendChild(el('div', { className: 'sig-overview-count', style: { color: d.color }, textContent: String(d.count) }));
+    card.appendChild(el('div', { className: 'sig-overview-label', textContent: d.label }));
+    var border = document.createElement('div');
+    border.style.cssText = 'position:absolute;top:0;left:0;right:0;height:2px;background:' + d.color;
+    card.appendChild(border);
+    overview.appendChild(card);
+  });
+
+  var methods = [
+    {
+      title: 'Explicit Mentions',
+      subtitle: 'README, descriptions, topics',
+      color: 'var(--accent-cyan)',
+      bgColor: 'rgba(0,229,255,0.08)',
+      icon: '\u{1F4E2}',
+      body: 'The most visible signal. These repos directly reference "opus 4.6" or "claude-opus-4-6" in their README, repository description, or GitHub Topics. Easy to find, but only catches projects that want to be found.',
+      query: 'gh search repos "opus 4.6" OR "claude-opus-4-6"\nGitHub Topics: claude-opus-4-6, opus-4-6',
+      example: 'anthropics/claudes-c-compiler',
+      exampleUrl: 'https://github.com/anthropics/claudes-c-compiler',
+      count: signalCounts.explicit,
+      total: libraryData.length
+    },
+    {
+      title: 'Under the Hood',
+      subtitle: 'Action.yml, locale files, model registries',
+      color: 'var(--accent-orange)',
+      bgColor: 'rgba(255,107,53,0.08)',
+      icon: '\u{1F50D}',
+      body: 'The stealth signal. Major projects like Discourse (43K\u2605), Kibana (20K\u2605), and Aider (30K\u2605) never advertise Opus 4.6 support \u2014 but it\'s buried in their model configs, locale translations, GitHub Actions, and settings YAMLs.',
+      query: 'gh search code "claude-opus-4-6" --filename=action.yml\ngh search code "claude-opus-4-6" --filename=models.yml\ngh search code "claude-opus-4-6" --filename=*.json',
+      example: 'discourse/discourse \u00b7 elastic/kibana \u00b7 Aider-AI/aider',
+      exampleUrl: 'https://github.com/discourse/discourse',
+      count: signalCounts.under,
+      total: libraryData.length
+    },
+    {
+      title: 'Co-Author Commits',
+      subtitle: 'Git commit signatures',
+      color: 'var(--accent-green)',
+      bgColor: 'rgba(105,240,174,0.08)',
+      icon: '\u{1F91D}',
+      body: 'Claude Code automatically adds a Co-Authored-By trailer to every commit it helps write. This is the most forensic signal \u2014 even if a project never mentions Opus in its docs, the commit history tells the truth.',
+      query: 'gh search commits "Co-Authored-By: Claude Opus 4.6"\ngh search commits "Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"',
+      example: 'jphein/speech-to-cli \u00b7 arjdroid/artiist',
+      exampleUrl: 'https://github.com/jphein/speech-to-cli',
+      count: signalCounts.commit,
+      total: libraryData.length
+    },
+    {
+      title: 'Config Files',
+      subtitle: 'CLAUDE.md, .claude/, settings.json',
+      color: 'var(--accent-violet)',
+      bgColor: 'rgba(179,136,255,0.08)',
+      icon: '\u2699',
+      body: 'Claude Code users often have CLAUDE.md project files or .claude/settings.json configs that reference specific model versions. Searching these surfaces projects that use the model as a development tool, not just a topic.',
+      query: 'gh search code "opus" --filename=CLAUDE.md\ngh search code "claude-opus-4-6" --filename=settings.json\npath:.claude/ filename:settings.json',
+      example: 'AutoMaker-Org/automaker \u00b7 feiskyer/claude-code-settings',
+      exampleUrl: 'https://github.com/AutoMaker-Org/automaker',
+      count: signalCounts.config,
+      total: libraryData.length
+    },
+    {
+      title: 'Activity Burst Detection',
+      subtitle: 'Dormant accounts suddenly active post-Feb 2026',
+      color: 'var(--accent-rose)',
+      bgColor: 'rgba(255,82,119,0.08)',
+      icon: '\u{1F4C8}',
+      body: 'The behavioral signal. We profiled developers and found old accounts (5-17 years) that were dormant or had minimal activity \u2014 until Opus 4.6 dropped. Sudden repo creation bursts correlating with the Feb 5 release are a strong indicator of AI-powered re-engagement.',
+      query: 'gh api users/{login} \u2192 check created_at vs public_repos\nFlag: account_age > 3yr AND repos < 10 AND post_feb_2026_repos > 3',
+      example: '@jphein (10yr, 40 repos, 12 new in 2026) \u00b7 @dr3d (17yr, 5 repos)',
+      exampleUrl: 'https://github.com/jphein',
+      count: '29%',
+      total: 'of devs',
+      wide: true
+    }
+  ];
+
+  methods.forEach(function(m, i) {
+    var card = el('div', { className: 'signal-method-card reveal' + (m.wide ? ' wide' : ''), style: { transitionDelay: (i * 0.08) + 's' } });
+    var borderTop = document.createElement('div');
+    borderTop.style.cssText = 'position:absolute;top:0;left:0;right:0;height:2px;background:' + m.color;
+    card.appendChild(borderTop);
+
+    var iconBox = el('div', { className: 'smc-icon', style: { background: m.bgColor }, textContent: m.icon });
+    var titleEl = el('div', {}, [
+      el('div', { className: 'smc-title', style: { color: m.color }, textContent: m.title }),
+      el('div', { className: 'smc-subtitle', textContent: m.subtitle })
+    ]);
+    card.appendChild(el('div', { className: 'smc-header' }, [iconBox, titleEl]));
+    card.appendChild(el('div', { className: 'smc-body', textContent: m.body }));
+
+    var queryBox = el('div', { className: 'smc-query', textContent: m.query });
+    card.appendChild(queryBox);
+
+    var exLink = el('a', { href: m.exampleUrl, target: '_blank', textContent: m.example });
+    card.appendChild(el('div', { className: 'smc-example' }, [
+      document.createTextNode('e.g. '),
+      exLink
+    ]));
+
+    if (typeof m.count === 'number') {
+      var pct = Math.round((m.count / m.total) * 100);
+      var meter = el('div', { className: 'smc-meter' });
+      var fill = el('div', { className: 'smc-meter-fill', style: { background: m.color } });
+      meter.appendChild(fill);
+      card.appendChild(meter);
+      card.appendChild(el('div', { style: { fontSize: '9px', color: m.color, marginTop: '4px', letterSpacing: '1px' }, textContent: m.count + ' repos found (' + pct + '% of census)' }));
+      setTimeout(function() { fill.style.width = pct + '%'; }, 600 + i * 150);
+    } else {
+      card.appendChild(el('div', { style: { fontSize: '9px', color: m.color, marginTop: '12px', letterSpacing: '1px' }, textContent: m.count + ' ' + m.total }));
+    }
+
+    cards.appendChild(card);
+  });
+}
+
+function renderLibrary() {
+  var controls = document.getElementById('lib-controls');
+  var countEl = document.getElementById('lib-count');
+  var grid = document.getElementById('lib-grid');
+
+  // Search box
+  var search = el('input', { className: 'library-search', placeholder: 'Search repos, descriptions, languages...', type: 'text' });
+  controls.appendChild(search);
+
+  // Filter buttons
+  var filters = ['All', 'Explicit', 'Under Hood', 'Hackathon', 'Config', 'Co-Author'];
+  var filterMap = { 'All': null, 'Explicit': 'explicit', 'Under Hood': 'under', 'Hackathon': 'hackathon', 'Config': 'config', 'Co-Author': 'commit' };
+  var activeFilter = null;
+
+  filters.forEach(function(f) {
+    var btn = el('button', { className: 'filter-btn' + (f === 'All' ? ' active' : ''), textContent: f });
+    btn.addEventListener('click', function() {
+      controls.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeFilter = filterMap[f];
+      applyFilters();
+    });
+    controls.appendChild(btn);
+  });
+
+  // Header row
+  grid.appendChild(el('div', { className: 'lib-row header' }, [
+    el('div', { className: 'bar-label', style: { textAlign: 'left', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Repository' }),
+    el('div', { className: 'bar-label', style: { textAlign: 'left', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Language' }),
+    el('div', { className: 'bar-label', style: { textAlign: 'right', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Stars' }),
+    el('div', { className: 'bar-label', style: { textAlign: 'right', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '9px' }, textContent: 'Signal' })
+  ]));
+
+  // Rows
+  var rows = [];
+  libraryData.forEach(function(r) {
+    var link = el('a', { href: 'https://github.com/' + r.name, target: '_blank', textContent: r.name });
+    var nameCell = el('div', { className: 'lib-name' }, [link, el('div', { className: 'lib-desc', textContent: r.desc })]);
+
+    var langCell = el('div', { className: 'lib-lang' });
+    if (r.lang) { langCell.appendChild(el('span', { className: 'lang-dot', style: { background: r.lc } })); langCell.appendChild(document.createTextNode(r.lang)); }
+    else { langCell.textContent = '\u2014'; }
+
+    var starsCell = el('div', { className: 'lib-stars', textContent: r.stars > 0 ? r.stars.toLocaleString() + ' \u2605' : '\u2014' });
+    var signalCell = el('div', { className: 'lib-signal' }, [el('span', { className: 'signal-tag ' + SIGNAL_CLASSES[r.signal], textContent: SIGNAL_LABELS[r.signal] })]);
+
+    var row = el('div', { className: 'lib-row' }, [nameCell, langCell, starsCell, signalCell]);
+    row._data = r;
+    grid.appendChild(row);
+    rows.push(row);
+  });
+
+  function applyFilters() {
+    var q = search.value.toLowerCase();
+    var visible = 0;
+    rows.forEach(function(row) {
+      var d = row._data;
+      var matchesFilter = !activeFilter || d.signal === activeFilter;
+      var matchesSearch = !q || (d.name + ' ' + d.desc + ' ' + (d.lang || '')).toLowerCase().indexOf(q) !== -1;
+      if (matchesFilter && matchesSearch) {
+        row.classList.remove('lib-hidden');
+        visible++;
+      } else {
+        row.classList.add('lib-hidden');
+      }
+    });
+    countEl.textContent = 'Showing ' + visible + ' of ' + libraryData.length + ' repositories';
+  }
+
+  search.addEventListener('input', applyFilters);
+  applyFilters();
+}
+
+// ── INIT ──
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(animateCounters, 1200);
+  renderTimeline();
+  renderBarChart('lang-chart', langData);
+  renderBarChart('age-chart', accountAgeData);
+  renderDonut('star-donut', 'star-legend', starDistrib);
+  renderDonut('cat-donut', 'cat-legend', categoryData);
+  renderDonut('dev-donut', 'dev-legend', devTypeData);
+  renderRepoTable();
+  renderNotable();
+  renderDevCards('dormant-grid', dormantDevs, true);
+  renderDevCards('newdev-grid', newDevs, false);
+  renderCopilotContext();
+  renderJpheinGrid();
+  renderSignals();
+  renderLibrary();
+  document.querySelectorAll('.reveal').forEach(function(e) { observer.observe(e); });
+});
+</script>
+
+</body>
+</html>
