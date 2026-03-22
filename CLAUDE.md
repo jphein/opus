@@ -1,3 +1,4 @@
+<!-- claude-md-version: 579e743 | updated: 2026-03-22 -->
 # CLAUDE.md
 
 ## What This Is
