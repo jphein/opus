@@ -1,2 +1,8 @@
-.playwright-mcp/
+# Images / screenshots (binary)
 *.png
+*.jpg
+*.jpeg
+
+# Tooling
+.playwright-mcp/
+.claude/
