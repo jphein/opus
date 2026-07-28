@@ -20,3 +20,37 @@ jobs:
           grep -q '<!DOCTYPE html>' index.html || grep -q '<!doctype html>' index.html
           grep -q '<html' index.html
           grep -q '</html>' index.html
+
+  # version.json is a registered check on status.realm.watch, and it is COMMITTED (Pages here
+  # is build_type:legacy — served from the branch, so CI cannot inject it). A committed version
+  # file is a hand-maintained one, which is a file that goes stale silently. This makes it
+  # impossible to merge a stale one instead.
+  #
+  # Deliberately corpus-free: it verifies the two fields that are pure functions of git
+  # history, not the sigil word. The word is a pure function of the hash, so a correct hash
+  # produced by tools/stamp_version.py implies a correct name — and checking it would mean
+  # installing canonical realm-sigil, which cannot be pip-installed from GitHub until the
+  # pyproject build-backend fix (sigil.realm.watch#7) is pushed. Upgrade this to a full
+  # regenerate-and-diff once it is; the script is deterministic precisely so that works.
+  version-stamp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # `git log -- index.html` needs real history, not a shallow clone
+
+      - name: version.json must match the last change to index.html
+        run: |
+          set -euo pipefail
+          test -f version.json || { echo "::error::version.json is missing — the monitored endpoint would 404"; exit 1; }
+          want_hash=$(git log -1 --format=%h -- index.html)
+          want_built=$(git log -1 --format=%cd --date=format-local:%Y-%m-%dT%H:%M:%SZ -- index.html)
+          got_hash=$(python3 -c 'import json;print(json.load(open("version.json"))["hash"])')
+          got_built=$(python3 -c 'import json;print(json.load(open("version.json"))["built"])')
+          echo "index.html last changed in $want_hash at $want_built"
+          echo "version.json declares       $got_hash at $got_built"
+          if [ "$want_hash" != "$got_hash" ] || [ "$want_built" != "$got_built" ]; then
+            echo "::error::version.json is stale. Run: python3 tools/stamp_version.py && git add version.json"
+            exit 1
+          fi
+          echo "version.json is current."
