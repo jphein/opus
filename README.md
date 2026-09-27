@@ -51,3 +51,7 @@ Projects were found through five methods:
 ## Built With
 
 This entire project — the research, the dashboard, and this README — was built using Claude Opus 4.6 via Claude Code.
+
+## License
+
+AGPL-3.0-or-later © 2026 Jeffrey Pine Hein. See [LICENSE](LICENSE).
